@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/3047988f-337b-4a2c-a3f1-3adcd3fab890" alt="Ghostwriter" />
+  <img src="assets/ghost-writer.png" alt="Ghostwriter" width="200" />
 </p>
 
 # Ghostwriter
