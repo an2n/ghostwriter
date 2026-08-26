@@ -14,17 +14,13 @@ desktop, OpenCode, and any other agent that reads skills off the filesystem.
 ## Installing
 
 ```bash
-git clone https://github.com/an2n/ghostwriter.git
-cd ghostwriter
-./skills.sh          # Claude Code (~/.claude/skills) - also picked up by OpenCode
-./skills.sh codex     # Codex CLI (~/.codex/skills)
-./skills.sh chatgpt   # ChatGPT desktop / other agents (~/.agents/skills)
-./skills.sh all       # all of the above
+npx skills add an2n/ghostwriter --full-depth --all
 ```
 
-`skills.sh` symlinks by default, so a later `git pull` in this repo updates whatever
-you've installed automatically. Pass `--copy` for a self-contained install that doesn't
-depend on this repo staying where it is.
+`--full-depth` is required since this repo has three skills nested under `skills/*/`
+rather than a single `SKILL.md` at the root. Drop `--all` to pick specific skills or
+agents interactively, or add `-g` for a global (user-level) install instead of
+project-level. See `npx skills --help` for the full option set.
 
 Restart your agent (or start a new session) and the three skills are available - try
 `/ghostwriter` (Claude Code), or just say "rewrite this in my voice" with some text.
@@ -34,8 +30,8 @@ there's nothing to install - paste the contents of `skills/ghostwriter/SKILL.md`
 other two, if you want the full pipeline) directly into the conversation.
 
 **As a Claude Code plugin:** point Claude Code's plugin/marketplace mechanism at this repo
-instead of running `skills.sh`. Skill discovery is declared in
-`.claude-plugin/plugin.json` (`"skills": "./skills"`).
+instead. Skill discovery is declared in `.claude-plugin/plugin.json`
+(`"skills": "./skills"`).
 
 ## What's in here
 
