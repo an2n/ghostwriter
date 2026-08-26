@@ -4,6 +4,9 @@
 
 # Ghostwriter
 
+> A ghostwriter is a professional writer hired to draft or edit literary works, articles,
+> or speeches that are published under another person's name.
+
 An agent skill set that writes text in your own voice instead of generic AI prose, with an
 ai clean and check built into the pipeline. Works with Claude Code, Codex CLI, ChatGPT
 desktop, OpenCode, and any other agent that reads skills off the filesystem.
@@ -66,13 +69,13 @@ If the profile drifts from how you actually write (you keep correcting the same 
 ```bash
 git clone https://github.com/an2n/ghostwriter.git
 cd ghostwriter
-./install.sh          # Claude Code (~/.claude/skills) - also picked up by OpenCode
-./install.sh codex     # Codex CLI (~/.codex/skills)
-./install.sh chatgpt   # ChatGPT desktop / other agents (~/.agents/skills)
-./install.sh all       # all of the above
+./skills.sh          # Claude Code (~/.claude/skills) - also picked up by OpenCode
+./skills.sh codex     # Codex CLI (~/.codex/skills)
+./skills.sh chatgpt   # ChatGPT desktop / other agents (~/.agents/skills)
+./skills.sh all       # all of the above
 ```
 
-`install.sh` symlinks by default, so a later `git pull` in this repo updates whatever
+`skills.sh` symlinks by default, so a later `git pull` in this repo updates whatever
 you've installed automatically. Pass `--copy` for a self-contained install that doesn't
 depend on this repo staying where it is.
 
@@ -84,7 +87,7 @@ there's nothing to install - paste the contents of `skills/ghostwriter/SKILL.md`
 other two, if you want the full pipeline) directly into the conversation.
 
 **As a Claude Code plugin:** point Claude Code's plugin/marketplace mechanism at this repo
-instead of running `install.sh`. Skill discovery is declared in
+instead of running `skills.sh`. Skill discovery is declared in
 `.claude-plugin/plugin.json` (`"skills": "./skills"`).
 
 ## Attribution

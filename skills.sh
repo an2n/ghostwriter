@@ -5,12 +5,12 @@ set -euo pipefail
 # agent harnesses' skills directories.
 #
 # Usage:
-#   ./install.sh            # Claude Code only (~/.claude/skills)
-#   ./install.sh claude     # same as above
-#   ./install.sh codex      # Codex CLI (~/.codex/skills)
-#   ./install.sh chatgpt    # ChatGPT desktop / other agents (~/.agents/skills)
-#   ./install.sh all        # all of the above
-#   ./install.sh --copy     # copy files instead of symlinking (any target above)
+#   ./skills.sh            # Claude Code only (~/.claude/skills)
+#   ./skills.sh claude     # same as above
+#   ./skills.sh codex      # Codex CLI (~/.codex/skills)
+#   ./skills.sh chatgpt    # ChatGPT desktop / other agents (~/.agents/skills)
+#   ./skills.sh all        # all of the above
+#   ./skills.sh --copy     # copy files instead of symlinking (any target above)
 #
 # Symlinks are used by default so a `git pull` in this repo updates the
 # installed skills automatically. Pass --copy for a self-contained install
