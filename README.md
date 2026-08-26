@@ -1,11 +1,12 @@
 <p align="center">
-  <img src="assets/ghost-writer.png" alt="Ghostwriter" width="200" />
+  <img src="assets/ghostwriter.png" alt="Ghostwriter" width="200" />
 </p>
 
 # Ghostwriter
 
-A Claude Code plugin that writes text in your own voice instead of generic AI prose, 
-with an ai clean and check built into the pipeline.
+An agent skill set that writes text in your own voice instead of generic AI prose, with an
+ai clean and check built into the pipeline. Works with Claude Code, Codex CLI, ChatGPT
+desktop, OpenCode, and any other agent that reads skills off the filesystem.
 
 ## What's in here
 
@@ -62,27 +63,29 @@ If the profile drifts from how you actually write (you keep correcting the same 
 
 ## Installing
 
-**Quick local setup (no plugin system):**
-
 ```bash
-git clone https://github.com/an2n/ghostwriter.git ghostwriter
-cp -r ghostwriter/skills/ghostwriter ~/.claude/skills/ghostwriter
-cp -r ghostwriter/skills/ai-check ~/.claude/skills/ai-check
-cp -r ghostwriter/skills/ai-clean ~/.claude/skills/ai-clean
+git clone https://github.com/an2n/ghostwriter.git
+cd ghostwriter
+./install.sh          # Claude Code (~/.claude/skills) - also picked up by OpenCode
+./install.sh codex     # Codex CLI (~/.codex/skills)
+./install.sh chatgpt   # ChatGPT desktop / other agents (~/.agents/skills)
+./install.sh all       # all of the above
 ```
 
-Restart Claude Code (or start a new session) and the three skills are available - try
-`/ghostwriter`, or say "rewrite this in my voice" with some text.
+`install.sh` symlinks by default, so a later `git pull` in this repo updates whatever
+you've installed automatically. Pass `--copy` for a self-contained install that doesn't
+depend on this repo staying where it is.
 
-**As an installed plugin:** point Claude Code's plugin/marketplace mechanism at this repo.
-Skill discovery is declared in `.claude-plugin/plugin.json` (`"skills": "./skills"`), so
-once the plugin is installed, `ghostwriter`, `ai-check`, and `ai-clean` are picked up
-automatically - no manual copying needed, and future `git pull`s in the plugin's install
-location keep it current.
+Restart your agent (or start a new session) and the three skills are available - try
+`/ghostwriter` (Claude Code), or just say "rewrite this in my voice" with some text.
 
-**Keeping a local copy in sync:** if you edit the skills in this repo, re-run the `cp -r`
-commands above (or symlink instead of copying) to push changes into `~/.claude/skills/` -
-editing the repo alone doesn't affect what Claude Code actually runs.
+For agents without filesystem-based skill folders (ChatGPT web, Gemini, Cursor, Aider),
+there's nothing to install - paste the contents of `skills/ghostwriter/SKILL.md` (and the
+other two, if you want the full pipeline) directly into the conversation.
+
+**As a Claude Code plugin:** point Claude Code's plugin/marketplace mechanism at this repo
+instead of running `install.sh`. Skill discovery is declared in
+`.claude-plugin/plugin.json` (`"skills": "./skills"`).
 
 ## Attribution
 
