@@ -1,6 +1,6 @@
 {
 	"name": "ghostwriter",
 	"version": "1.0.0",
-	"description": "Writes and rewrites text in your own voice instead of generic AI prose, with an ai clean and check built in.",
+	"description": "Writes and rewrites text in your own voice instead of generic AI prose, with a check and polish pass built in.",
 	"skills": "./skills"
 }

@@ -1,17 +1,17 @@
 ---
-name: ai-check
+name: check
 description: >
   Use when someone asks "does this sound AI?", "check if this is AI-written", "what gives
-  this away as AI", "run ai-check on this", or "score this text". Also use when reviewing
+  this away as AI", "run check on this", or "score this text". Also use when reviewing
   a draft for AI tells before publishing, or when a piece of text reads as suspiciously
   polished, generic, or pattern-y and the user wants a forensic breakdown of why.
 ---
 
-# AI-Check
+# Check
 
 Reads a piece of text and reports how strongly it reads as AI-written, with a concrete
 list of what fired and why. This is a find-only skill - it never rewrites anything. See
-`ai-clean` for the fix side.
+`polish` for the fix side.
 
 ## How the scoring works
 

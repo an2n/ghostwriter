@@ -1,5 +1,5 @@
 ---
-name: ai-clean
+name: polish
 description: >
   Use whenever the user asks to "humanize", "make this sound more human", "rewrite to
   avoid AI detection", "make this less AI-sounding", "add a human voice", or "write like
@@ -9,10 +9,10 @@ description: >
   credibility.
 ---
 
-# AI-Clean
+# Polish
 
 Rewrites text to move it toward the statistical and stylistic shape of human writing.
-This is a rewrite-only skill - it never scores anything. See `ai-check` for the audit
+This is a rewrite-only skill - it never scores anything. See `check` for the audit
 side; the two are companions but operate independently.
 
 ## Six moves, apply all of them

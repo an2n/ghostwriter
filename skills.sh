@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Installs the ghostwriter, ai-check, and ai-clean skills into one or more
+# Installs the ghostwriter, check, and polish skills into one or more
 # agent harnesses' skills directories.
 #
 # Usage:
