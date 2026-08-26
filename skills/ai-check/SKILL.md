@@ -58,8 +58,8 @@ Flags:
   multifaceted, in the realm of, the landscape of (abstract noun), a myriad of, a plethora of,
   actually (as filler), additionally (as a paragraph opener)
 - Copula avoidance: elaborate verbs standing in for "is"/"are"/"has" ("serves as", "stands as",
-  "marks", "represents", "boasts", "features", "offers"). "Gallery 825 serves as LAAA's
-  exhibition space" should just be "is."
+  "marks", "represents", "boasts", "features", "offers"). "The clinic serves as the county's
+  only walk-in center" should just be "is."
 - Significance inflation: "stands as a testament to", "marks a pivotal moment in", "indelible
   mark", "evolving landscape", "setting the stage for", "deeply rooted in", "a key turning point"
 - Promotional/sales register: "nestled in the heart of", "boasts a rich heritage", "renowned
@@ -152,7 +152,7 @@ Flags:
   describe what used to happen instead of current behavior, outside release notes or migration
   guides.
 - **Unfilled placeholder/template text:** a bracketed or parenthetical fill-in-the-blank left
-  unreplaced — "[Entertainer's Name]", "(Add your channel URL here)", "[Article subject]".
+  unreplaced — "[Company Name]", "(insert client testimonial here)", "[Topic]".
   A near-certain tell on its own — humans don't leave Mad-Libs-style blanks in finished text.
 
 ### Signal E: Specificity deficit
