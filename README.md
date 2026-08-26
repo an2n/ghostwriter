@@ -17,14 +17,12 @@ Three skills, each with one job:
 
 - **`ghostwriter`** — the orchestrator. Loads your voice profile, runs the pipeline below,
   and drafts the actual rewrite.
-- **`ai-check`** — find-only. Scores a piece of text across nine detection signals
-  (perplexity, burstiness, hedge density, structural tells, specificity, transitions,
-  punctuation, voice/register, rhetorical scaffolding) and returns a verdict and a score out
-  of 27. Never rewrites anything.
-- **`ai-clean`** — rewrite-only. Applies nine hygiene levers (word choice, sentence-length
-  variance, hedge removal, structural flattening, specificity, voice, transitions,
-  punctuation, RLHF-voice stripping) to move text in the human direction. Never scores
-  anything.
+- **`ai-check`** — find-only. Scores a piece of text across four tell clusters (word
+  choice, rhythm, document shape, voice and construction) and returns a verdict from
+  "reads human" to "heavily AI" based on weighted tell density. Never rewrites anything.
+- **`ai-clean`** — rewrite-only. Applies six moves (word choice, sentence rhythm, cutting
+  padding and imposed structure, anchoring specifics, letting a voice through,
+  punctuation) to move text in the human direction. Never scores anything.
 
 `ghostwriter` is the one you actually invoke. `ai-check` and `ai-clean` are also directly
 callable on their own if you just want a score or just want a cleanup pass without the
@@ -39,12 +37,13 @@ Say "rewrite this", "write this better", "reply to this", "in my voice", or invo
    doesn't exist yet, it asks once for 2-3 writing samples and builds one.
 2. **Check the input** — if there's existing text to rewrite, `ai-check` runs on it first
    to find out what's actually wrong, so the rewrite targets real problems instead of
-   applying every lever blindly.
+   applying every move blindly.
 3. **Clean** — `ai-clean` runs the hygiene pass, directed by what the check found.
 4. **Apply the voice profile** on top, overriding `ai-clean`'s generic defaults wherever
    they conflict with how you actually write.
-5. **Verify the output** — `ai-check` runs again on the draft. If it's not Human or Likely
-   Human, the pipeline goes back to `ai-clean` and redrafts, capped at two cycles.
+5. **Verify the output** — `ai-check` runs again on the draft. If it doesn't read as human
+   or mostly human, the pipeline goes back to `ai-clean` and redrafts, capped at two
+   cycles.
 6. **Return the text**, with a one-line plain-text status after each step as it happens
    (no leading symbols, no emoji, no batching everything at the end) — never the full
    `ai-check` report inline.
@@ -92,21 +91,15 @@ instead of running `skills.sh`. Skill discovery is declared in
 
 ## Attribution
 
-`ai-clean` and `ai-check`'s core frameworks - the nine hygiene levers, the nine-signal
-scoring rubric, and the banned word/phrase list - are adapted from the
+`ai-clean` and `ai-check` build on the functional idea of pairing a multi-category
+AI-detection scorer with a matching multi-lever rewrite pass, an approach explored by the
 [humanize](https://github.com/harshaneel/humanize) project by Harshaneel Gokhale (MIT
-License, Copyright (c) 2026 Harshaneel Gokhale), which itself draws on 50+ peer-reviewed
-detection-literature sources.
+License) and, for the underlying pattern knowledge, by Wikipedia's ["Signs of AI
+writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) (CC BY-SA 4.0,
+maintained by WikiProject AI Cleanup) and the
+[humanizer](https://github.com/blader/humanizer) skill (MIT) that also draws on it. The
+clustering scheme, scoring mechanic, rewrite protocol, and wording in both skills here are
+their own, rewritten to be independent of any one source's specific structure or
+phrasing rather than a copy of it.
 
-`ai-check`'s additional content-pattern catalog draws on two further sources:
-
-- Wikipedia's ["Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing),
-  maintained by WikiProject AI Cleanup, licensed CC BY-SA 4.0.
-- The [humanizer](https://github.com/blader/humanizer) skill (MIT), which itself adapted
-  patterns from the same Wikipedia page.
-
-This repo is MIT licensed (see `LICENSE`), consistent with the MIT-licensed material it
-builds on. One nuance worth knowing: Wikipedia's "Signs of AI writing" content is CC BY-SA
-4.0, which is share-alike - reuse of that specific content should carry the same
-attribution-and-share-alike terms if you redistribute it further, separate from the MIT
-terms covering the rest of this repo.
+This repo is MIT licensed (see `LICENSE`).

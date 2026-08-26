@@ -9,587 +9,393 @@ description: >
   credibility.
 ---
 
-# AI-Clean Text Skill
+# AI-Clean
 
-Transforms AI-generated or flat text into output that mirrors the statistical and stylistic
-fingerprint of human writing. Grounded in the published detection literature (Wu et al. 2025,
-Kujur 2025, Mitchell et al. 2023, and the AAAI 2025 shared task corpus).
+Rewrites text to move it toward the statistical and stylistic shape of human writing.
+This is a rewrite-only skill - it never scores anything. See `ai-check` for the audit
+side; the two are companions but operate independently.
 
----
+## Six moves, apply all of them
 
-## Mental model: what detectors actually measure
+Not a checklist to pick from - every move gets applied on every rewrite. Skipping one
+because "this draft doesn't need it" is usually wrong; the tells compound quietly.
 
-Before rewriting, internalize the nine signals detectors use (the eight stylometric signals plus
-the RLHF / instruction-tuning fingerprint). Your output must move in the human direction on ALL
-of them, not just one or two.
+### Move 1: Word choice
 
-| Signal | AI direction (avoid) | Human direction (target) |
-|---|---|---|
-| **Perplexity** | Predictable, low-surprise word choices | Occasional unexpected but apt words; word choices driven by rhythm, specificity, or memory |
-| **Burstiness** | Uniform sentence length (~15–20 words every time) | Aggressive alternation: short punchy sentences. Then a longer one that builds and unfolds over a clause or two. |
-| **Hedge density** | Overuse of "often", "generally", "typically", "it is important to note", "it is worth mentioning" | Hedges used only when actually uncertain; direct assertion otherwise |
-| **Lexical repetition** | Same root words recycled across paragraphs | Natural semantic diversity; synonyms and reformulations |
-| **Structural markers** | Bullet lists for everything; numbered steps; excessive subheadings | Flowing prose; structure emerges from content, not imposed on it |
-| **Personal/emotional specificity** | Generic, neutral, applicable-to-anyone claims | Specific: exact numbers, named examples, temporal anchors ("last quarter", "when I ran X") |
-| **POS density** | High adjective/auxiliary verb density; subordinating conjunctions everywhere | More nouns and verbs doing the heavy lifting; adjectives earned, not decorative |
-| **Punctuation fingerprint** | Em dashes to inject drama, semicolons to link clauses, colons mid-sentence to introduce — all overused | Periods do the work. Em dashes rare and deliberate. Semicolons almost never. Colons mainly for lists at end of sentence. |
+Swap predictable vocabulary for what a person would actually reach for in context:
 
-### Lever ↔ signal map
-
-The levers in the next section are the write-side counterparts of the signals `ai-check` grades on (A–I). Apply a lever, lower the matching signal:
-
-| Lever | Targets `ai-check` signal |
-|---|---|
-| 1 Perplexity injection | A Perplexity |
-| 2 Burstiness injection | B Burstiness |
-| 3 Hedge surgery | C Hedge density |
-| 4 Structural flattening | D Structural tells |
-| 5 Specificity insertion | E Specificity |
-| 6 Voice and register | H Voice / register |
-| 7 Discourse coherence | F Transitions |
-| 8 Punctuation normalization | G Punctuation |
-| 9 Strip RLHF voice | I Rhetorical scaffolding (RLHF subset) |
-
-Lever 9 covers only the RLHF slice of Signal I; the full rhetorical-scaffolding catalog is enforced by the audit pass (step 5.5), not by any single lever.
-
----
-
-## Nine humanization levers, apply all of them
-
-### Lever 1: Perplexity injection (word-level)
-
-Replace predictable vocabulary with words a real person would actually choose given *this* context:
-
-- Swap generic verbs for specific ones: "address" → "untangle", "utilize" → "lean on", "implement" → "wire up"
-- Let the subject matter suggest the vocabulary: a Go engineer would say "flush the buffer", not "clear the temporary data storage"
+- Generic verb → specific one: "address" → "untangle", "utilize" → "lean on", "implement"
+  → "wire up"
+- Let the subject matter pick the words: a backend engineer says "flush the buffer," not
+  "clear the temporary data storage"
 - One or two genuinely surprising but accurate word choices per paragraph
-- Avoid: "delve", "leverage", "robust", "streamline", "significant", "comprehensive", "notably", "it is worth noting", "in today's fast-paced world"
+- Cut on sight: delve, leverage (verb), robust, streamline, significant, comprehensive,
+  notably, it is worth noting, in today's fast-paced world
 
-**Watch for elegant variation (synonym cycling).**
+**Elegant variation.** LLMs avoid repeating a noun by cycling synonyms for the same
+referent - a repetition-penalty sampling artifact. "The founder built the company. The
+entrepreneur later sold it. The visionary now advises startups." Same person, three
+labels. Fix: pick the canonical noun and reuse it, or use a pronoun for variation.
+Synonym-cycling is detectable; pronoun reference reads human.
 
-LLMs avoid repeating the same noun by cycling through synonyms for the same referent. The cause is repetition-penalty code in the sampling layer. The result is sentences like: "The protagonist faces many challenges. The main character must overcome obstacles. The central figure eventually triumphs. The hero returns home." Same person, four labels.
+**Copula avoidance.** "Serves as," "stands as," "marks," "represents," "boasts,"
+"features," "offers" standing in for "is"/"are"/"has." "The bakery serves as a
+neighborhood fixture" → "The bakery is a neighborhood fixture." Use the plain verb.
 
-Rule: identify the canonical noun for each referent and use it consistently. Use a pronoun ("she", "they", "the same person") for variation instead of a synonym. Synonym cycling is detectable; pronoun reference is human-natural.
+**Inflated significance.** "Stands as a testament to," "marks a pivotal moment,"
+"indelible mark," "evolving landscape," "deeply rooted in." Cut entirely or replace with
+the concrete claim: "The shop opened in 2003, marking a pivotal moment in the block's
+retail history" → "The shop opened in 2003."
 
-Examples to fix:
-- "the protagonist / the main character / the central figure / the hero" → "the protagonist" + "she" (or "he" / "they")
-- "the company / the firm / the organization / the enterprise" → "the company" + "it"
-- "the study / the research / the paper / the investigation" → "the study" + "it"
+**Brochure language.** "Nestled in the heart of," "vibrant," "breathtaking," "must-visit,"
+"boasts a rich heritage," "renowned for." Cut it. "Nestled in the heart of the valley,
+Marrowbend stands as a vibrant town with a rich cultural heritage" → "Marrowbend is a town
+in the valley, population around 4,000."
 
-### Lever 2: Burstiness injection (sentence-level)
+**Vague sourcing.** "Industry observers have noted," "experts argue," "several sources
+indicate" without naming one. Name the actual source, or cut the claim: "Industry
+observers have noted adoption has accelerated" → "Adoption tripled between Q2 2024 and Q1
+2025 per [named survey]." If you can't anchor it, don't make the claim.
 
-Enforce sentence length variance. Target: standard deviation of sentence word count > 8.
+**Vague relation words.** "In connection with," "associated with," "connected to"
+avoiding a direct relationship. Use "of," "for," "by," "caused by," or "working with," and
+state the actual connection.
 
-Rules:
-- Every 3–4 sentences, insert one sentence of 5 words or fewer. Just drop it. Like that.
-- Every 3–4 sentences, allow one sentence that genuinely earns its length — a compound thought that can't be broken without losing the relationship between its parts.
-- Never have more than 3 consecutive sentences within 5 words of each other in length.
-- Burstiness fails in both directions. Three consecutive short sentences without a longer counterweight reads choppy, not punchy. Always pair a run of shorts with a longer sentence that earns its length.
-- Read the paragraph aloud mentally. If it has a metronomic rhythm, it's too uniform.
-- Watch for mid-paragraph uniformity traps: the opening and closing sentences often vary, but the middle three or four sentences collapse into the same band. Break one of them.
+**Hyphenated-pair overuse.** "Third-party," "cross-functional," "data-driven" hyphenated
+after the noun where grammar doesn't require it. "The report is data-driven" → "data
+driven."
 
-### Lever 3: Hedge surgery
+**Filler constructions.** Run this substitution pass:
 
-Audit every softening word:
-- Delete: "it is important to note that", "it is worth mentioning that", "generally speaking", "in many cases", "it can be argued", "often", "typically" (unless genuinely needed for accuracy)
-- Replace with direct assertion: "This matters because X" not "It is important to consider that X may be relevant"
-- If uncertainty is real, express it human-style: "I'm not sure this holds for edge cases, but..." not "while results may vary"
-- Never announce a pattern before describing it: "The pattern is X" → just describe X. Announcing it first is AI tutorial structure.
-- Don't soften rules with "almost always" or "generally" when the rule is real. If exceptions exist, name them explicitly: "This breaks down when X" not "this is almost always true."
-- Avoid announcement-colon openers: "The rule I use:", "The approach here:", "The key insight:", "The other thing I'd say:", "The other thing I'd tell myself:" — state the rule directly without the preamble. This applies in first-person voice too; "The other thing I'd tell myself: X" → "Also: X" or just start with X.
-- Sentences doing two logical jobs (claim A AND claim B joined by "than"/"while"/"and") often read cleaner split. If a sentence is making a comparison and a conclusion, let them breathe as two.
-- Em dashes used as pivots ("Not X — that's Y") can always be replaced with a period: "Not X. That's Y." Prefer the period.
-
-**Filler-phrase substitutions:**
-
-AI inflates simple constructions. Run this find-replace pass:
-
-| Verbose (AI) | Concise (human) |
+| Verbose | Direct |
 |---|---|
 | In order to achieve this goal | To achieve this |
 | Due to the fact that | Because |
 | At this point in time | Now |
 | In the event that | If |
 | Has the ability to | Can |
-| Has the capacity to | Can |
 | It is important to note that the data shows | The data shows |
 | Make a decision | Decide |
-| Make an assumption | Assume |
-| At the present moment | Now |
 | In a manner that is | (drop entirely) |
-| For the purpose of | To / For |
 | With regard to / With respect to | About / On |
-| In light of the fact that | Since |
 | Despite the fact that | Although |
-| Prior to | Before |
-| Subsequent to | After |
-| In the process of | (drop entirely) |
-| The fact that | (drop entirely; rephrase) |
+| Prior to / Subsequent to | Before / After |
+| The fact that | (drop entirely, rephrase) |
 
-### Lever 4: Structural flattening
+### Move 2: Sentence rhythm
 
-Convert AI prose patterns to human prose patterns:
+Enforce real length variance. Target: standard deviation of sentence word count above 8.
 
-| AI pattern | Human replacement |
+- Every 3-4 sentences, drop in one sentence of 5 words or fewer. Just drop it. Like that.
+- Every 3-4 sentences, let one sentence genuinely earn its length - a compound thought
+  that would lose its relationship if split.
+- Never more than 3 consecutive sentences within 5 words of each other.
+- Uniform *short* runs are just as much a tell as uniform *long* ones - three choppy
+  fragments in a row without a longer counterweight reads forced, not punchy.
+- Watch the middle of a paragraph specifically: the opening and closing sentences often
+  vary on their own, but the middle three or four collapse into the same band.
+
+### Move 3: Cut the padding
+
+Audit every softening word and every imposed structure at once - both are the same
+underlying tell: content shaped by a template instead of by what actually needs saying.
+
+**Reflexive hedges.** Delete "it is important to note that," "generally speaking," "in
+many cases," "often," "typically" unless genuine uncertainty is being expressed. Replace
+with direct assertion. If uncertainty is real, say it personally: "I'm not sure this
+holds for edge cases" beats "results may vary."
+
+**Announcing before showing.** "The pattern is X" said before X is described. "The rule I
+use:", "The key insight:" - preamble before the actual content. State the thing directly.
+
+**Diplomatic non-answers.** "While X has benefits, it also presents challenges" dodging
+an actual tradeoff. Name the specific tradeoff instead.
+
+**Bullet-list default.** Convert intro-plus-three-bullets into a flowing paragraph where
+the items are joined by sense, not markers, unless the user specifically asked for a
+list.
+
+**Bloated sectioning.** "There are three main factors: ..." - just discuss the factors
+and let the transitions carry the structure. Numbered sections only when order genuinely
+matters.
+
+**Restating what was just said.** Topic sentence, evidence, then a restatement of the
+topic sentence. Cut the restatement - humans don't recap two sentences later.
+
+**Leading with the negative.** "The case for X isn't Y, it's Z" / "It's not about X, it's
+about Y." Lead with Z (or Y) directly; address the alternative afterward if it's worth
+addressing at all.
+
+**Comparative framing.** "More specific than vague," "faster than Y," or the reversed
+"X rather than Y." Describe the thing directly; drop the contrast.
+
+**Negating before asserting.** "Not just X," "not X, it's Y." State what it is, skip the
+negation.
+
+**Clean binaries.** "Either X or Y," "between X and Y" where the real situation is a
+spectrum or has a third option. Name the actual situation.
+
+**Symmetric trade-off pairs.** "(X, but Y) or (A, but B)" - real trade-offs are
+asymmetric. Break the symmetry or drop one side.
+
+**Stock structural moves**, one line each - fix means the same as the description implies
+unless noted:
+
+| Pattern | Fix |
 |---|---|
-| Intro sentence + 3-bullet list | Prose paragraph where items are joined by flow, not bullets |
-| "There are three main factors: ..." | Just talk about the factors, letting transitions carry the structure |
-| "In conclusion, ..." | End mid-thought if the thought is complete; or use "The net of all this..." / "Bottom line:" |
-| Numbered sections for everything | Sections only when the content is genuinely enumerable and order matters |
-| Topic sentence + evidence + restatement | Topic sentence + evidence; skip the restatement (humans don't recap what they just said) |
-| "The case for X isn't Y, it's Z" (strawman pivot) | Lead with Z directly; if Y is worth addressing, do it after establishing Z, not before |
-| "It's not about X, it's about Y" | Start with Y. The rebuttal structure signals AI argumentative scaffolding. |
-| "not X, it's Y" (without "just") | Same family as "not just X." Don't frame by negating before asserting. "It's not self-reported, it's merit-based" → "It's merit-based." |
-| "more like X than Y" / "more X than Y" (any comparative) | Covers all forms: "more specific than vague", "more like X than Y", "faster than Y". Also fires reversed as "X rather than Y" ("consolidation of power rather than ideological purity") — same family, flipped order. Describe X; drop the contrast. |
-| "in connection with" / "associated with" / "connected to" (vague relation) | Abstracting away a direct relationship instead of naming it. Use "of", "for", "by", "caused by", or "working with" and state the actual connection. |
-| "either X or Y" / "between X and Y" binary framing | Real situations have a spectrum or three options. Name the actual situation without the either/or frame. |
-| Balanced parenthetical pairs: "(X, but Y) or (A, but B)" | Two symmetric trade-offs in one sentence — real trade-offs are asymmetric. Break the symmetry or drop one parenthetical. |
-| Chiasmus / balanced opposition | "Being specific about being wrong / being vague about being right" — reversed parallel that sounds like insight. Make the comparison asymmetric. |
-| Anaphora (same sentence opener 2–3× in sequence) | Collapse or vary the opener entirely. |
-| "turns out" / "it turns out that" as a pivot | Replace with direct statement. |
-| Thesis-first opener | Start in the middle of the experience instead. |
-| Formula personal essay opener: "The [noun] I [remember/think about] most [adverb]" | "The failure I think about most often" / "The moment I remember most clearly" — AI opens personal essays with this deliberate-introspection construction. Start with the incident itself: "In 2019 I shipped a rate limiter that fell apart the first hour it hit real traffic." |
-| Asyndeton tricolon building in complexity | Three items without conjunctions, each longer and emotionally heavier than the last: "Two hours of X, six engineers doing Y, a postmortem where Z." AI uses this to manufacture escalating weight. Break the third item off as its own sentence, or join two items with "and." |
-| Intensifier/diminisher opposition | "X obsessively / Y barely at all" — balanced contrast using an amplifier against a diminisher. Same family as chiasmus. Make the contrast asymmetric: "I tested the happy path constantly. The failure paths got one pass." |
-| Mini-aphorism paragraph closer | "That's the part that stuck." / "That's what changed." / "That's the whole thing." — 4–7 word fragment used to close a paragraph with a punchy lesson. AI appends these to tell the reader what to conclude. Delete it and let the evidence land. |
-| Landing phrase: "is the actual/real work" | "Getting close enough to understand a failure is the actual work." AI's formulaic way to deliver a conclusion. State the conclusion directly without the landing phrase. |
-| Parallel subject mirror | Two consecutive sentences opening with mirrored noun phrases: "The failure itself is just the event. Understanding it is separate." AI constructs these as closing pairs. Break the mirror: vary the subject of one sentence. |
-| Local coherence over-smooth | Every sentence connects perfectly to the next. Zero friction, zero cognitive-load artifacts. AI text shows lower variability in token-level surprisal — it reads too uniform — a signal that survives surface rewriting (DivEye, arXiv 2509.18880, TMLR 2026). Fix: introduce at least one sentence per paragraph that slightly misfires — a thought that starts one direction and shifts, a word choice that's more casual than the surrounding register, a sentence that doesn't connect as cleanly as the others. |
-| "Laid out that way" / "Arranged that way" / "Seen this way" reframe pivot | Just make the observation directly. |
-| "X is the easy/hard part" | Start with the challenge itself. |
-| Tricolon parallel structure | Three beats, identical grammar. Break symmetry or reduce to two. |
-| Perfect paragraph-per-idea essay arc | Let one paragraph do two jobs, or leave a thought unresolved. |
-| Three-act Slack/update structure | Break with a fourth element that doesn't fit the arc. |
-| Copula avoidance: "X serves as Y", "X stands as Y", "X marks Y", "X represents Y", "X boasts Y", "X features Y", "X offers Y" | Use "is" or "has" directly. "The clinic serves as the county's only walk-in center" → "The clinic is the county's only walk-in center." AI substitutes elaborate verbs for simple copulas because the training corpora rewarded "varied" prose. Real writers use "is" and "has." |
-| Significance inflation: "stands as a testament to", "marks a pivotal moment in", "indelible mark", "evolving landscape", "setting the stage for", "deeply rooted in" | Cut entirely or replace with the concrete claim. "The co-op opened in 1989, marking a pivotal moment in the neighborhood's food-access history" → "The co-op opened in 1989 - the first grocery in the neighborhood in a decade." |
-| Promotional / marketing register: "nestled in the heart of", "vibrant", "breathtaking", "must-visit", "stunning", "boasts a rich heritage", "renowned for", "groundbreaking" | Cut the brochure language. "Nestled in the heart of the valley, Marrowbend stands as a vibrant town with a rich cultural heritage" → "Marrowbend is a town in the valley, population around 4,000." |
-| Vague attributions: "Industry observers have noted", "Experts argue", "Several sources indicate", "Critics have suggested" | Name a specific source or drop the claim. "Industry observers have noted adoption has accelerated" → "Adoption tripled between Q2 2024 and Q1 2025 per Stack Overflow's 2025 developer survey." If you can't anchor it, you probably shouldn't make the claim. |
-| Outline-formula "Challenges and Future Prospects" sections | "Despite challenges... continues to thrive" is a section template AI loves. Replace with the specific challenges and what's being done about them, or drop the section entirely. |
+| Repeated sentence opener 2-3x in a row | Collapse or vary the opener |
+| "Turns out X" as a reveal | State X directly |
+| Thesis-first opener on a personal piece | Start in the middle of the experience |
+| Formula essay opener ("The failure I think about most...") | Start with the incident itself |
+| Three-item escalating list, no conjunctions | Break the third item into its own sentence, or join two with "and" |
+| Amplifier/diminisher opposition ("X constantly, Y once") | Make the contrast asymmetric |
+| Punchy paragraph-closer delivering a "lesson" | Delete it; let the evidence stand |
+| Formulaic landing phrase ("is the actual work") | State the conclusion plainly |
+| Mirrored-subject closing pair | Vary one subject; break the mirror |
+| Every sentence connecting too perfectly (over-smooth) | Introduce one sentence per paragraph that shifts direction or misfires slightly |
+| Participial reframe pivot ("Seen this way...") | Make the observation directly |
+| Tricolon (three beats, identical grammar) | Break the symmetry, or cut to two |
+| Perfect one-job-per-paragraph arc | Let one paragraph do two jobs, or leave something unresolved |
+| Three-act Slack arc under the surface | Add a fourth element that doesn't fit, or loop back to something |
+| Outline-formula "Challenges" section | Cut it, or replace with the specific challenge and what's being done |
+| Unfilled placeholder ("[Company Name]") | Fill it with the real detail, or rewrite so it isn't needed |
 
-### Lever 5: Specificity insertion
+### Move 4: Anchor with specifics
 
-Every abstract claim needs a grounding anchor:
+Every abstract claim needs a real anchor:
 
-- Generic: "Many companies have adopted this approach."
-  Human: "Three companies I've seen pull this off — Stripe, Datadog, and PlanetScale — all did it the same way."
-- Generic: "Performance improved significantly."
-  Human: "Latency dropped from 340ms to 80ms under the same load profile."
-- Generic: "This is a common problem."
-  Human: "Every team I've talked to hits this around the 50-engineer mark."
+- "Many companies have adopted this" → "Three teams I've seen do this - one at a
+  50-person startup, two at larger orgs - all landed on the same approach."
+- "Performance improved significantly" → "Latency dropped from 340ms to 80ms under the
+  same load."
+- "This is a common problem" → "Every team I've talked to hits this around the
+  50-engineer mark."
 
-If specific details aren't available, use plausible specificity frames: "when you're running at X scale...", "in the cases I've seen...", "the one time this bit us..."
+If real specifics aren't available, use a plausible specificity frame instead of
+inventing a fact: "when you're running at X scale...", "in the cases I've seen...". Never
+fabricate a number, name, or date to sound more concrete - that's its own kind of tell,
+and it's dishonest regardless.
 
-### Lever 6: Voice and register
+### Move 5: Let a voice come through
 
-Human writing carries traces of the writer's perspective and history:
+Human writing carries the writer's actual perspective, not a polished, opinion-free
+narrator:
 
-- First-person where natural ("I find that...", "In my experience...", "The way I think about this...")
-- Occasional second-person direct address ("If you've ever debugged this...", "You'll recognize this pattern if...")
-- Mild rhetorical questions used as transitions: "So why does this matter?", "Where does this leave us?"
-- Self-interruption or course-correction mid-thought: "— actually, that's not quite right —", "more precisely:"
-- Contractions in conversational registers: "don't", "it's", "you'll" (not "do not", "it is", "you will")
+- First person where natural: "I find that...", "In my experience..."
+- Occasional second person: "If you've ever debugged this..."
+- A rhetorical question used as a real transition, not a tic
+- Mid-thought self-correction: "actually, that's not quite right - more precisely..."
+- Contractions in conversational registers
 
-### Lever 7: Discourse coherence (non-AI transitions)
+**Strip the assistant voice.** This is the single highest-value cleanup, because current
+detectors mostly key on instruction-tuning residue - the "helpful assistant" register -
+rather than "AI-ness" in the abstract.
 
-AI text strings paragraphs with robotic transitions. Replace:
-
-| AI transition | Human replacement |
+| Tell | Fix |
 |---|---|
-| "Furthermore," | Cut it; let the next sentence follow naturally, or start with "Also," if bridging is needed |
-| "Moreover," | Same |
-| "In addition to the above," | "And" works fine here |
-| "It is clear that" | Delete; assert directly |
-| "As previously mentioned," | Don't mention it again, or rephrase without the callback |
-| "This highlights the importance of" | Say what the importance IS: "Which means you need to..." |
+| "Here's how I'd think about it...", "Let me walk you through..." | Cut the framing, just say the thing |
+| "On one hand X, on the other Y, ultimately depends on..." | Pick a side and state it |
+| Listing 5 unrequested considerations instead of answering | Answer, then add the constraint if needed |
+| Defining terms the reader already knows | Cut it, trust the reader |
+| A caveat appended to every claim | Make the claim; caveat only real edge cases |
+| "That's a great question, and..." | Cut entirely |
+| Closing summary recapping what was just said | Cut it |
+| "I hope this helps", "let me know if..." | Cut, end on the last substantive sentence |
+| "While I understand the appeal of X, I would suggest..." | Just disagree: "X doesn't work because Y" |
+| Knowledge-cutoff disclaimer ("as of my training cutoff...") | Cut, state what you actually know |
+| Chat scaffolding pasted into content ("Here is an overview of X", "Of course!") | Strip on sight |
+| Prompt-refusal residue ("As an AI language model, I can't...") | Strip, state the content directly |
+| Sycophantic opener ("Great question!", "You're absolutely right!") | Cut; if something's genuinely good, name what specifically |
 
-### Lever 8: Punctuation normalization
+### Move 6: Reset the punctuation
 
-AI models overuse three punctuation marks as structural crutches. Treat each as a warning sign.
+**Em dashes and their hyphen disguise.** Max one per 300 words. Never the double-wrap ("X
+— like this — Y"), never as a list-joiner mid-sentence. If the register bans em dashes
+(a style guide, a voice profile), don't just swap the character for a plain hyphen - "X -
+like this - Y" is the exact same construction wearing different punctuation. Break the
+construction itself: cut the aside, split the sentence, or fold it into one clause.
+Satisfying "no em dash" by character-substitution alone leaves the tell fully intact.
 
-**Em dashes (—)**
+**Semicolons.** Treat every one as a bug outside explicitly formal/academic register.
+Replace with a period, or "and"/"but"/"so" when the relationship matters. Exception:
+comma-containing lists ("Austin, TX; Denver, CO").
 
-The most reliable single AI tell in 2024–2025 writing. AI uses em dashes to add a dramatic aside or secondary clause mid-sentence — like this — at roughly 3–5× the rate of human writers.
+**Mid-sentence colons.** Colons go at the end of a complete clause, introducing what
+follows - not mid-thought. "The answer is: start earlier" → "Start earlier." One colon
+per paragraph max in non-list prose.
 
-Rules:
-- Maximum one em dash per 300 words
-- Only use when a parenthetical genuinely interrupts rather than extends — not as a fancier comma
-- Most em dash uses can be replaced with a period, a comma, or just cutting the aside entirely
-- Never use the em dash pattern "X — like this — Y" (double em dash wrapping a clause) — that pattern is almost exclusively AI
-- When the register bans em dashes (e.g. a voice profile that says "use plain dash instead"), don't just swap the character - "X - like this - Y" written with a plain hyphen is the exact same AI-constructed wrap, just wearing a different punctuation mark. Break the construction itself: cut the aside, split into two sentences, or fold it into one clause. Satisfying the "no em dash" rule by character-substitution alone leaves the tell fully intact.
+**Curly quotes.** Straight quotes and apostrophes are the human signal in technical and
+casual writing. Run a find-replace before shipping unless the register is genuinely
+typeset publishing (a magazine, a print book).
 
-**Semicolons (;)**
+## The chatbot-artifact check (run this on every output, no exceptions)
 
-Real-world prose almost never uses semicolons outside of academic or legal writing. Journalists, engineers, and business writers don't reach for them. AI uses them to link two independent clauses because it learned from formal writing corpora.
+Search the draft for literal residue from a chatbot's raw output before calling anything
+done:
 
-Rules:
-- Treat every semicolon as a bug unless the register is explicitly formal/academic
-- Replace with: a period (most of the time), "and" / "but" / "so" (when the relationship matters), or restructure into two sentences
-- Exception: lists of items that themselves contain commas ("San Francisco, CA; Austin, TX; New York, NY")
+- `oaicite`, `turn0search`/`turn0image`, `grok_card`, `[cite: `, `[span_`, lenticular
+  brackets (`【...†...】`), `utm_source=chatgpt.com`/`openai`/`copilot.com`,
+  `referrer=grok.com`
+- Raw Markdown (`**bold**`, `# heading`, `---`) leaked into a format that isn't Markdown
+- Any bracketed placeholder left unfilled ("[Company Name]", "(insert testimonial
+  here)")
 
-**Mid-sentence colons (:)**
-
-Colons are fine at the end of a sentence to introduce a list or example. Mid-sentence colons — used to inject a clause or restatement — are an AI pattern.
-
-Rules:
-- Colons go at the end of a complete clause to introduce what follows, not mid-thought
-- "The answer is: start earlier" → "The answer is to start earlier" or "Start earlier."
-- "The problem: nobody tests this" → "Nobody tests this." or "Here's the problem: nobody tests this." (full sentence before the colon)
-- One colon per paragraph maximum in non-list prose
-
-**Curly quotation marks ("smart quotes")**
-
-ChatGPT and several other LLMs output curly quotes (`"text"`, `'text'`) where most human writers in technical and casual contexts use straight quotes (`"text"`, `'text'`). This is a near-certain single-character signal that survives almost any rewriting.
-
-Rules:
-- Run a find-replace on every output before shipping: `"` → `"`, `"` → `"`, `'` → `'`, `'` → `'`
-- Exception: long-form prose intended for a publishing context where typographic quotes are house style (e.g. a magazine, a print book). In every other register, straight quotes are the human signal.
-- This applies to apostrophes too: `don't` (curly) vs `don't` (straight). The curly apostrophe is the same ChatGPT tell.
-
-**Quick reference — punctuation substitutions:**
-
-| AI pattern | Human replacement |
-|---|---|
-| `X — like this — Y` (double em dash) | Cut the aside, or move it to its own sentence |
-| `X; Y` (two related clauses) | `X. Y.` or `X, and Y` |
-| `The issue: X` (mid-sentence colon) | `The issue is X.` or `Here's the issue: X.` |
-| `X — Y` (em dash as dramatic comma) | `X, Y` or `X. Y.` |
-| `X — item, item, item` (em dash introducing a list) | `X. Item, item, item.` or use a colon after a complete sentence |
-| Three or more em dashes in one paragraph | Rewrite; the paragraph has structural problems |
-
-### Lever 9: Strip RLHF / instruction-tuning voice
-
-The most consequential 2025-2026 finding in the detection literature: current detectors mostly
-fire on **RLHF and instruction-tuning artifacts**, not "AI-ness" per se. arXiv 2605.19516
-("Base Models Look Human") and corroborating Pangram analysis show that raw, non-instruction-tuned
-base-model output reads as human to SOTA detectors. What gets flagged is the "helpful assistant"
-voice that emerges from RLHF: polite hedging, balanced tradeoffs, structured enumeration, perfect
-local coherence, and a particular flavor of explainer-tone.
-
-Strip these specifically:
-
-| RLHF tell | What to do |
-|---|---|
-| "Helpful assistant" register: "Here's how I'd think about it...", "Let me walk you through...", "There are a few things to consider..." | Cut the framing. Just say the thing. |
-| Balanced tradeoff offering: "On one hand X, on the other Y, ultimately the right answer depends on..." | Pick a side. State your position. The reader can disagree. |
-| Structured enumeration of unrequested options: when asked "should I use X?", listing 5 considerations instead of answering | Answer. Acknowledge the constraint after if needed. |
-| Pedagogical scaffolding: defining terms the audience already knows, recapping context they share with you | Cut. Trust the reader. |
-| "Important caveats" appended to every claim | Make the claim. Caveats only when the edge case is actually plausible. |
-| Acknowledgment-prefix: "That's a great question, and...", "You raise an interesting point..." | Cut entirely. |
-| Closing summary that recaps what was just said | Cut. Humans don't recap their own paragraph two sentences after writing it. |
-| Hedged conclusions: "I hope this helps", "Let me know if you'd like me to elaborate" | Cut. End on the last substantive sentence. |
-| Polite refusal-style framing of disagreement: "While I understand the appeal of X, I would suggest..." | Just disagree: "X doesn't work because Y." |
-| Symmetric framing of asymmetric tradeoffs | Real tradeoffs are asymmetric. State the asymmetry. |
-| Knowledge-cutoff disclaimers: "As of my training cutoff", "Up to my last training update", "While specific details are limited based on available information", "Based on what I know up to..." | Cut entirely. Replace with what you actually know. If you genuinely don't know, say "I don't know X" not the institutional hedge. These disclaimers are pure RLHF residue and almost never serve the reader. |
-| Collaborative chat artifacts pasted into content: "Here is an overview of X", "I hope this helps!", "Let me know if you'd like me to expand", "Of course!", "Certainly!" | Strip on sight. These are conversational scaffolding that got pasted in when content was lifted from a chat session. Real published prose never carries them. |
-| Prompt-refusal residue: "As an AI language model, I can't directly...", "As a large language model, I..." | Strip entirely and state the actual content — rare in current models, but a near-certain tell when it slips through. |
-| Sycophantic / servile prefixes: "Great question!", "That's an excellent point!", "You're absolutely right!" | Cut entirely. Real engagement names the specific thing that was good ("the point about X is interesting because Y"), not the act of asking. |
-
-This lever overlaps with Lever 3 (hedge surgery) and Lever 4 (structural flattening) but is the
-single most valuable addition because it targets what detectors actually detect, not what the
-1990s-era stylometric literature thought they detected.
-
----
-
-## Advanced techniques (optional, when stakes are high)
-
-The nine core levers above are pure-rule. 2024-2026 benchmarks (CEOWORLD, HasteWire,
-Pangram) consistently show that hybrid (rule + model-in-the-loop) approaches outperform pure-rule.
-When the stakes warrant the extra cost, layer one or more of these on top:
-
-### Advanced 1: Detector-scored best-of-N
-
-Generate 3 to 5 variants of the humanized output. Score each against either (a) a real detector
-(GPTZero, Pangram, Binoculars), (b) a banned-word count, or (c) a perplexity probe. Pick the
-lowest-scoring variant. Source: arXiv 2506.07001 (detector-guided adversarial paraphrasing, 87.88%
-average TPR reduction across 8 detectors).
-
-### Advanced 2: Iterative paraphrase pass
-
-After applying Levers 1 through 9, run the output through a second LLM with "paraphrase this while
-keeping the meaning." Iterative paraphrase creates a "laundering region" that defeats most surface
-detectors (PADBen, arXiv 2511.00416). Diminishing returns past 2 passes.
-Cost: subtle meaning drift accumulates per pass; verify the substance still holds.
-
-### Advanced 3: Writer-profile distillation pre-step
-
-When the user supplies prior writing samples, distill style hypotheses from them first ("this
-writer uses fragments aggressively, opens with concrete scenes, never starts a paragraph with
-a thesis sentence"), then humanize the new text against those hypotheses. Source: HyPerAlign
-(arXiv 2505.00038). More effective than raw few-shot.
-
-### Advanced 4: Self-rewrite distance sanity check
-
-After humanizing, give the output to a different LLM with "rewrite this in different words." If
-the new version is nearly identical to the input, the text still sits at a local maximum of model
-probability (the Raidar inversion signal, arXiv 2401.12970) and reads as AI. If the rewrite
-diverges meaningfully, the humanized output has genuine idiosyncrasy.
-
-### Advanced 5: Embedding-guided synonym swap (when implementable)
-
-Lever 1's word-list approach is a proxy for the real target: lowering perplexity at specific
-high-confidence tokens. Embedding-guided substitution (arXiv 2501.18998) picks synonyms that
-explicitly lower Fast-DetectGPT scores. When tooling is available, prefer it over the static
-word-list.
-
-### Advanced 6: Disfluency injection (casual register only)
-
-For casual / Slack / chat registers, light disfluencies (controlled hesitations, mid-thought
-restarts, "wait actually" course-corrections) raise perceived spontaneity. Source: arXiv 2412.12710.
-Off by default for formal, technical, or professional writing — disfluencies in a board memo are
-their own AI tell.
-
-### What NOT to do (documented dead ends)
-
-- **Homoglyph injection (SilverSpeak, arXiv 2406.11239):** Cyrillic / Latin lookalikes drop
-  detector MCC to near zero, but it's defeated by Unicode normalization and is ethically a clear
-  tampering signal. Skip.
-- **Single cross-model rewrite as silver bullet:** DAMAGE benchmark (arXiv 2501.03437) shows that
-  having Model A rewrite Model B's output does NOT defeat modern trained detectors on its own.
-- **Watermark stripping:** Out of scope for stylistic humanization. Tools exist (RLCracker
-  arXiv 2509.20924, De-mark arXiv 2410.13808) but live in a separate problem space.
-
----
+Any hit gets deleted outright - this isn't a style judgment call, it's leftover garbage.
 
 ## Rewrite protocol
 
-When given text to humanize:
+1. **Read the input first.** Note the domain, audience, and register.
 
-0. **(Optional) Writer-profile distillation.** If the user has provided prior writing samples
-   (a blog, past emails, an essay corpus), extract style hypotheses across these six dimensions
-   before touching the new text:
+2. **Check for a voice sample.** If the user has supplied their own prior writing, extract
+   5-10 concrete style facts before touching anything else - real sentence-length
+   variance, real vocabulary level, how paragraphs open, real punctuation habits, real
+   recurring phrases. Apply the six moves *in service of those facts*, not the generic
+   defaults below. If the sample runs short and fragmented, don't "improve" it toward
+   longer sentences - that would be moving away from the actual voice, not toward it.
 
-   1. **Sentence length pattern.** Mostly short? Mostly long? What's the variance? Any signature short-sentence fragments?
-   2. **Word choice level.** Casual? Academic? Domain-specific jargon density? Do they use "stuff" and "thing" or "elements" and "components"?
-   3. **Paragraph openers.** Jump straight in? Set context first? Open with a question? Open with a scene?
-   4. **Punctuation habits.** Em dashes? Parenthetical asides? Semicolons? Ellipses? Lots of sentence fragments?
-   5. **Recurring phrases / verbal tics.** Any specific phrases that repeat across the sample? Filler words ("honestly", "basically", "look,")?
-   6. **Transition style.** Explicit connectors ("However", "So")? Or do they just start the next thought without bridging?
+3. **Check for factual anchors.** Count the numbers, names, dates, and concrete examples
+   in the input. If there are none and no voice sample was given, stop and say so instead
+   of producing clean-but-empty output:
 
-   Distill 5 to 10 specific style hypotheses from these dimensions. Examples: "this writer never opens
-   with a thesis", "this writer uses fragments aggressively in conclusions", "this writer never uses
-   'I think'", "this writer's sentence variance is roughly 6 to 28 words".
+   > This input has no factual anchors - no numbers, names, dates, or examples. A cleaned
+   > version would look polished but still read as generic to a learned classifier, which
+   > scores specificity separately from surface style. Options: add real specifics, give
+   > me a writing sample to match, or confirm you want me to proceed anyway.
 
-   **Critical rule when matching voice:** don't just remove AI patterns. Replace them with patterns
-   from the sample. If the sample uses short sentences, don't produce long ones. If the sample uses
-   casual vocabulary ("stuff", "thing"), don't upgrade to "elements", "components". The skill's
-   default biases (toward terse, specific, direct prose) should yield to the sample's actual register
-   when they conflict.
+4. **Rewrite in one pass**, applying all six moves. Light editing won't move the
+   statistical fingerprint - this needs real structural change.
 
-   Then apply the levers in service of those hypotheses. Source: HyPerAlign (arXiv 2505.00038).
+5. **Gate check before calling it done.** Scan for each of these and fix any hit:
+   - Em dash count over the 1-per-300-words threshold, in either dash form
+   - Any semicolon
+   - Any word from the banned list below
+   - Comparative framing ("more X than Y", "X rather than Y")
+   - Negating-before-asserting ("not just X", "not X, it's Y")
+   - Chatbot markup/citation residue (see above)
+   - Unfilled placeholders
 
-1. **Read the full input first.** Identify: topic domain, intended audience, register (technical/casual/professional), approximate length target.
+6. **Self-check what the gate doesn't cover:**
+   - No three consecutive sentences within 5 words of each other
+   - At least one sentence under 6 words per 150 words of output
+   - Every paragraph has at least one specific anchor
+   - No bullet list unless requested
+   - Consistent voice throughout - no drifting from third-person formal to first-person
+     casual mid-piece
+   - Every colon follows a complete clause (informal fragments are fine in casual
+     registers)
 
-2. **Inventory the AI tells.** Before rewriting, mentally flag: hedge count, list/bullet count, sentence length uniformity, specific examples present/absent, transition word inventory, and RLHF voice markers (helpful-assistant register, balanced tradeoffs, structured enumeration).
+7. **One audit loop.** Ask directly: what in this still reads as AI? These residuals are
+   almost always the Move 3/Move 5 patterns that survive because they feel like good
+   writing - a mini-aphorism closer, a mirrored pair, a leftover assistant-voice tic.
+   Fix them, then re-run steps 5-6 once. Don't loop past this - diminishing returns, and
+   over-editing creates a different problem (choppy, voiceless prose). If a flagged
+   sentence's removal leaves a paragraph too thin, the paragraph was too thin - collapse
+   or merge it rather than keeping the pattern to preserve length.
 
-   **Also count: specific anchors.** How many numbers, named entities (people, companies, products, tools, places), dates, time references, or concrete examples appear in the input? If the count is **zero** AND no voice sample was provided in step 0, STOP. Do not humanize. Output this meta-prompt instead:
+8. **Length sanity check.** If the output is under half the input's length, the input
+   likely had a lot of padding that got correctly cut. Don't pad it back - that
+   reintroduces exactly what was removed. Instead, append one line after the rewrite (not
+   before): "Input had a lot of filler; this is N% shorter. To make it longer honestly,
+   give me real specifics to add."
 
-   > *This input has no factual anchors — no numbers, names, dates, or specific examples. A humanized version would be brochure-clean on the surface but still empty-feeling, and learned classifiers (GPTZero, Grammarly) will flag it on the specificity signal alone (Signal E in `ai-check`). Three options:*
-   > 1. *Add the actual specifics: product names, customer names, metrics, dates, named tools*
-   > 2. *Provide a sample of your writing so I can match a real voice*
-   > 3. *Confirm you want me to proceed anyway, knowing the output will still read as AI to learned classifiers*
+9. **Output the rewritten text only.** No preamble, no "here's the humanized version."
+   Just the text.
 
-   This rule exists because Lever 5 (Specificity insertion) explicitly forbids inventing facts, and Lever 5's empty-input case wasn't previously handled — the skill would silently produce clean-but-empty output that still failed learned-classifier detection on Signal E. Empty inputs require either real specifics, a real voice to imitate, or explicit user opt-in.
+## Writing new content from scratch
 
-3. **Rewrite in a single pass** applying all nine core levers. Do not do "light editing"; the statistical fingerprint requires actual structural change.
+Same six moves apply from the first sentence, not just to a rewrite:
 
-4. **Pre-output gate (run BEFORE the full self-check; these fail most often).**
-   Scan the draft for each item and fix any hit before moving on:
-   - [ ] **Em dash count.** Search for "—". More than (word_count / 300) instances? Cut or replace with periods.
-   - [ ] **Semicolons.** Search for ";". Any present? Replace with a period or "and"/"but"/"so" unless it's a comma-containing list.
-   - [ ] **Banned vocabulary.** Search the draft for any term in the master list (§ Reference: banned word/phrase list, end of this skill). Highest-frequency offenders to eyeball first: delve, leverage (verb), utilize, robust, comprehensive, furthermore, moreover, "it is important to note". Any hits? Rewrite.
-   - [ ] **Comparative framing.** Search for "more ... than", "feels like ... not", and "rather than" used as a reversed diminishment ("X rather than Y"). Any match? Describe the thing directly instead.
-   - [ ] **Diminishment.** Search for "not just", "not X, it's", "not X but". Any match? State what it IS without the negation prefix.
-   - [ ] **Chatbot markup/citation residue.** Search for literal artifacts from a chatbot's raw output: `oaicite`, `turn0search`/`turn0image`, `grok_card`, `[cite: `, `[span_`, lenticular brackets (`【...†...】`), `utm_source=chatgpt.com`/`openai`/`copilot.com`, `referrer=grok.com`, or raw Markdown (`**`, `#`, `---`) leaked into non-Markdown output. Any hit? Delete it outright — this is a near-certain tell, not a style call.
-   - [ ] **Unfilled placeholders.** Search for bracketed fill-in-the-blanks left unreplaced ("[Company Name]", "(insert client testimonial here)"). Any hit? Either fill it with the real detail if you have it, or rewrite the sentence so it doesn't need one — never leave the blank in.
+- Start mid-thought when the register allows: "The tricky part about X isn't what most
+  people think."
+- No "In this post, I will..." opener.
+- No summary paragraph unless the piece is genuinely long enough to need a re-anchor.
+- Calibrate to the domain - an engineer's Slack message and a founder's board memo don't
+  sound alike.
 
-5. **Self-check before output.** Step 4 already cleared em dashes, semicolons, banned vocabulary (incl. templated email/Slack closers), comparative framing, and diminishment — don't re-check those here. This pass covers what the gate doesn't:
-   - [ ] No three consecutive sentences within 5 words of the same length
-   - [ ] At least one sentence ≤ 6 words per 150 words of output
-   - [ ] Every paragraph has at least one specific anchor (number, name, example, time reference)
-   - [ ] No bullet lists unless the user specifically requested them
-   - [ ] Voice is consistent throughout (don't switch from third-person formal to first-person casual mid-piece)
-   - [ ] Every colon is preceded by a complete sentence, not a mid-clause fragment (exception: Slack/informal fragments are fine)
-   - [ ] **Rhetorical scaffolding:** scan for the structural patterns catalogued in the Signal I checklist (step 5.5) — they survive the gate because they feel like good writing. For outputs >150 words the audit pass runs the full list; for shorter outputs, at minimum check aphorism closers, anaphora, "turns out" pivots, "What X was Y" setups, and "either/or" binaries.
+## Domain calibration
 
-5.5. **Audit pass.** Run the Signal I checklist below on every output — it is the single source of truth for structural / rhetorical-scaffolding patterns. For outputs >150 words, also run the rewrite-and-recheck loop: after the self-check passes, ask yourself explicitly: *"What still makes this read as AI?"* List 2 to 3 residual patterns. These are usually Signal I rhetorical scaffolding (parallel-subject mirrors, mini-aphorism closers, weak strawman pivots) or RLHF voice residue (helpful-assistant register, balanced framing) — patterns that pass the rule-based gates because they feel like good writing.
+**Technical:** domain-native vocabulary ("the hot path," "this falls apart at scale"),
+short declarative sentences for definitive claims, direct tradeoffs ("the downside is
+real: you lose..."), real tool names and version numbers when available.
 
-   Then rewrite those specific sentences to address them. Re-run the pre-output gate and self-check on the revised version.
+**Narrative/essay:** open with a scene, not a thesis. Let the argument emerge from
+evidence. Deliberate fragments for rhythm. One moment of genuine uncertainty per 500
+words.
 
-   This catches the residuals that survive surface humanization. Empirically, the first revision of any non-trivial output has 2 to 4 Signal I patterns still present; this loop reduces them to 0 or 1.
+**Professional/business:** cut "I hope this message finds you well," state the ask in the
+first sentence or two, use real numbers and deadlines, keep paragraphs to 2-3 sentences.
 
-   Loop once. Don't loop forever — diminishing returns past iteration 2, and you risk over-editing into a different problem (choppy, voiceless).
+**Slack/async updates:** abbreviations and approximations (`~60%`, `<10min`, `fwiw`,
+`lmk`), fragments and incomplete clauses throughout, mid-message second thoughts ("oh
+also -"), one thought bleeding into the next rather than topic-per-paragraph, numerals
+with approximation markers rather than spelled-out numbers, lowercase default. The
+accomplishment-caveat-next-steps arc has to actually break somewhere, not just get
+`fwiw` sprinkled on top.
 
-   **Critical: flagged residuals must be removed, not justified.** When the audit identifies a residual pattern, fix it. Don't keep it because *"removing it would collapse the paragraph"*, *"this register needs it"*, *"the piece reads thin without it"*, *"it would be choppy"*, or *"it acts as topic transition, not closing aphorism"*. Those rationalizations are how Signal I patterns survive the loop — they feel necessary precisely because they're constructed to feel necessary.
+## What this skill does not do
 
-   If removing a flagged sentence makes a paragraph too thin: the paragraph IS too thin. Collapse it, merge it with an adjacent paragraph, or cut it entirely. Don't preserve length by preserving AI patterns. An honest 80-word output beats a padded 200-word output that still reads as AI.
+- Guarantee a 0% score on any commercial detector - no method does that reliably.
+- Add invented facts to increase apparent specificity - use plausible framing instead,
+  never fabrication.
+- Change the factual content of the input, only its expression.
+- Apply the identical transformation to every register - domain and audience matter.
 
-   Red flag: if your audit explicitly says *"X is borderline but I'm keeping it because..."*, you just lost the loop. Cut it.
+## Reference: banned words and phrases
 
-   **Explicit Signal I checklist (run this during every audit, on every paragraph).** A general "what still reads as AI?" prompt misses things. Scan for these specific patterns and fix every hit:
+**Core vocabulary:** delve, leverage (verb), utilize, robust, comprehensive, streamline,
+foster, facilitate, pivotal, nuanced, multifaceted, crucial (overused), enduring, garner,
+valuable, vibrant, tapestry (figurative), testament (figurative), interplay, intricate,
+intricacies, landscape (abstract noun), showcase (verb), highlight (standalone verb),
+underscore (standalone verb), align with, actually (as filler), additionally (as opener)
 
-   - [ ] **Mini-aphorism closer.** Any paragraph ending in a 4-to-10-word punchy sentence that delivers a "lesson" or "punch line"? Examples: "Now we don't.", "the debugger is `psql`.", "Those are the next things.", "That's the part that stuck.", "Slide decks don't." Fix: cut the punch sentence, let the previous sentence be the closer, or rewrite the punch as part of the previous sentence.
-   - [ ] **Thesis-first paragraph opener.** Any paragraph that opens with a frame before the experience? "The rollout was the hard part.", "X is the easy/hard part.", "The real question is Y.", "The thing about X is Y." Fix: start with the concrete thing (an incident, a number, a specific moment) and let the thesis emerge.
-   - [ ] **Parallel-subject mirror.** Two consecutive sentences opening with mirrored noun phrases? "The code is one thing. Maintaining it is another." "The failure itself is just the event. Understanding it is separate." Fix: vary one subject; break the mirror.
-   - [ ] **Aphoristic closing sentence on the whole piece.** Does the very last sentence read as quotable standalone wisdom? Fix: end on a specific detail, an unresolved question, or a concrete next action instead.
-   - [ ] **Pattern announcement.** Any sentence that names a pattern before describing it? "The pattern is X.", "What kept showing up was Y." Fix: just describe the pattern.
-   - [ ] **"Turns out" / "it turns out that" pivot.** Any reveal-narrative framing? Fix: state the discovery directly.
-   - [ ] **Setup sentences ("What X was Y").** "What I didn't expect was X.", "What changed everything was Y." Fix: lead with X or Y directly.
-   - [ ] **Within-sentence anaphoric parallel list.** Four parallel question-word items in one sentence ("what X, what Y, why Z, what W")? Fix: use varied noun forms — "context, the problem, what changed" — not four parallel "what/why" starters.
-   - [ ] **Composed self-aware parenthetical.** Meta-commentary on your own state ("which I choose to read as X", "which I take as a sign of Y")? Fix: end on the concrete behavior, not your interpretation of it.
-   - [ ] **Parallel reason chains.** Three consecutive "subject + because/when + reason" sentences, even with different subjects? Fix: vary the clause structure — one "because", one bare assertion, one fragment.
-   - [ ] **Anaphora.** The same opening word starting 2+ consecutive sentences ("I still read slowly. I still lose the thread.")? Fix: collapse or vary the opener.
-   - [ ] **"Either X or Y" / "between X and Y" binary.** A clean two-option framing where the real situation is a spectrum? Fix: name the actual situation without the binary.
-   - [ ] **Balanced parenthetical pairs.** Symmetric trade-offs in one sentence — "(X, but Y) or (A, but B)"? Fix: real trade-offs are asymmetric; break the symmetry or drop one.
+**Hedge clusters:** it is important to note, it is worth mentioning, notably, it's worth
+noting, in many cases, generally speaking, it can be argued
 
-   Run this checklist on every paragraph. If you find 3+ hits, you also need to address them in the rewrite — these patterns compound. Two mini-aphorisms might be tolerable; three in five paragraphs is a clear AI signature.
-
-5.6. **Output-length sanity check.** If your humanized output is less than 50% of the input length, the input likely had substantial puffery that got correctly removed. **Don't pad it back up to match input length.** Padding reintroduces the patterns you just stripped — corporate filler, RLHF voice, balanced tradeoffs, restatement.
-
-   Instead, append a one-line meta-note AFTER the humanized text, separated by a blank line:
-
-   > *[Note: input was substantially puffery; humanized output is N% shorter. To make this longer without re-introducing AI patterns, add specific anchors: numbers, named entities, examples, or time references.]*
-
-   This is the only case where the skill outputs commentary alongside the rewrite. The no-preamble rule (step 8) still applies to the rewrite itself; the meta-note goes after, clearly separated.
-
-   The intent: make the gap visible to the user instead of silently producing thin output that still fails learned-classifier detection on Signal E (specificity).
-
-6. **(Optional) Self-rewrite distance sanity check.** When stakes are high, give the humanized output to a different LLM (or another instance) with the prompt "rewrite this in different words." If the rewrite is nearly identical to your output, the text still sits at a local probability maximum and reads as AI (Raidar inversion signal, arXiv 2401.12970). If the rewrite diverges meaningfully, the humanization is doing its job.
-
-7. **(Optional) Detector-scored best-of-N.** When stakes are high, generate 3 to 5 variants and pick the one that scores lowest on a real detector, a banned-word count, or a perplexity probe. Source: arXiv 2506.07001.
-
-8. **Output the rewritten text only.** No preamble like "Here is the humanized version:", no commentary on what was changed. Just the text. If the user wants a side-by-side or explanation, they'll ask.
-
----
-
-## Generating human text from scratch
-
-When writing new content (not rewriting):
-
-- Draft the content applying all nine core levers from the first sentence
-- Start mid-thought when it fits the register: "The tricky part about X isn't what most people think."
-- Don't use an "In this [article/post/section], I will..." opener
-- End without a summary paragraph unless the piece is genuinely long enough that readers need a re-anchor
-- Let the voice calibrate to the domain: an engineer's Slack post sounds different from a founder's board memo
-
-**Decoding-strategy note (when controlling generation):** the RAID benchmark (arXiv 2405.07940)
-found that varying sampling parameters (top-p, temperature, repetition penalty) of the source
-model is more destructive to detectors than paraphrase-based attacks. If you control the model
-that generates the text, set temperature high (0.9 to 1.1), set top-p loose (0.95 to 0.99), and
-increase repetition penalty (1.1 to 1.2). This widens the token distribution and breaks the
-"sits at a local maximum" property that detectors like DetectGPT rely on.
-
----
-
-## Domain-specific calibration
-
-### Technical (engineering, code, systems)
-
-- Use domain-native vocabulary: "the hot path", "this falls apart at scale", "the footgun here is...", "you'll hit the edge case when..."
-- Short sentences when making a definitive claim: "This is O(n²). Don't do it at scale."
-- Acknowledge tradeoffs directly, not diplomatically: "The downside is real: you lose..."
-- Reference real tool/library names, real version numbers, real error messages when available
-
-### Narrative / blog / essay
-
-- Open with a scene or specific moment, not a thesis
-- Let the argument emerge from the evidence rather than being stated up front
-- Use sentence fragments deliberately for rhythm. Like this.
-- Include one moment of genuine uncertainty or changed mind per 500 words
-
-### Professional / business
-
-- Cut the throat-clearing opener: not "I hope this message finds you well" but just the message
-- State the ask or point in sentence 1 or 2
-- Use numbers and deadlines: "by Thursday EOD", "the three blockers are..."
-- Short paragraphs (2–3 sentences max in email/memo)
-
-### Slack / async team updates
-
-Register collapse is the primary tell for Slack writing. AI writes Slack messages that read like polished status reports. Real Slack has:
-- Abbreviations and approximations: `~60%`, `<10min`, `fwiw`, `btw`, `lmk`, `tmrw`
-- **Fragment sentences and incomplete clauses throughout** — "hard commits: billing gRPC + pprof thing" not "My main commitments are the billing gRPC work and the pprof investigation"
-- **Self-corrections and mid-message second thoughts**: "oh also —" or "wait, actually" signals a human who's thinking while typing, not composing
-- **One thought bleeding into the next** — not topic-per-paragraph. Real messages loop back, add something that doesn't fit the structure, trail off.
-- Numbers as numerals with approximation markers: `~3-4 days`, `<10min`, not "approximately three to four days"
-- Single-word endings work: "lmk" as its own line
-- Lowercase throughout, no capitalized paragraph openers except proper nouns
-- **The structure must actually break**: accomplishment → caveat → next steps is still AI even with `fwiw` sprinkled in. Add a fourth element that doesn't fit, or loop back to something, or end with a question the message didn't set up.
-
----
-
-## What this skill does NOT do
-
-- It does not guarantee 0% AI scores on commercial detectors (no method does reliably)
-- It does not add false information to increase specificity — use plausible framing instead
-- It does not change the factual content of the input, only the expression
-- It does not apply the same transformation to every domain — register matters
-
----
-
-## Reference: banned word/phrase list (compile-time errors in AI text)
-
-Remove every instance of these before outputting:
-
-**Core AI vocabulary:**
-delve, leverage (verb), utilize, robust, comprehensive, streamline, foster, facilitate,
-pivotal, nuanced, multifaceted, crucial (overused), enduring, garner, valuable, vibrant, tapestry (figurative),
-testament (figurative), interplay, intricate, intricacies, landscape (as abstract noun),
-showcase (verb), highlight (as standalone verb), underscore (as standalone verb),
-align with, actually (as filler), additionally (as opener)
-
-**Hedge / softener clusters:**
-it is important to note, it is worth mentioning, notably, it's worth noting,
-in many cases, generally speaking, it can be argued
-
-**Filler / formula openers and closers:**
-in today's fast-paced world, in conclusion, in summary, to summarize,
-it goes without saying, needless to say, at the end of the day, at its core,
+**Formula openers/closers:** in today's fast-paced world, in conclusion, in summary, to
+summarize, it goes without saying, needless to say, at the end of the day, at its core,
 under the hood, the standard fix, the common approach, simple enough on paper
 
-**AI transition fingerprint:**
-furthermore, moreover, it is clear that, this highlights, this underscores,
-as previously mentioned, turns out (as a pivot), it turns out that
+**Transition fingerprint:** furthermore, moreover, it is clear that, this highlights,
+this underscores, as previously mentioned, turns out (as a pivot), it turns out that
 
-**Significance inflation:**
-stands as a testament to, marks a pivotal moment in, indelible mark, evolving landscape,
-setting the stage for, deeply rooted in, plays a vital role, a key turning point,
-represents a shift in
+**Significance inflation:** stands as a testament to, marks a pivotal moment in, indelible
+mark, evolving landscape, setting the stage for, deeply rooted in, plays a vital role, a
+key turning point, represents a shift in
 
-**Promotional / marketing register:**
-nestled in the heart of, in the heart of, breathtaking, must-visit, stunning,
-boasts a rich heritage, renowned for, groundbreaking (figurative), vibrant (cultural copy)
+**Brochure register:** nestled in the heart of, in the heart of, breathtaking,
+must-visit, stunning, boasts a rich heritage, renowned for, groundbreaking (figurative),
+vibrant (cultural copy)
 
-**Quantifier inflation:**
-a myriad of, a plethora of, in the realm of, the landscape of (abstract)
+**Quantifier inflation:** a myriad of, a plethora of, in the realm of, the landscape of
+(abstract)
 
-**Persuasive authority tropes:**
-the real question is, what really matters, fundamentally, the deeper issue,
-the heart of the matter, in reality
+**False-depth tropes:** the real question is, what really matters, fundamentally, the
+deeper issue, the heart of the matter, in reality
 
-**Signposting / tutorial scaffolding:**
-let's dive in, let's explore, let's break this down, here's what you need to know,
-now let's look at, without further ado
+**Tutorial scaffolding:** let's dive in, let's explore, let's break this down, here's what
+you need to know, now let's look at, without further ado
 
-**Knowledge-cutoff disclaimers:**
-as of my training cutoff, up to my last training update,
-while specific details are limited based on available information,
-based on what I know up to
+**Knowledge-cutoff disclaimers:** as of my training cutoff, up to my last training update,
+while specific details are limited based on available information, based on what I know
+up to
 
-**Sycophantic prefixes:**
-great question, you're absolutely right, that's an excellent point,
-of course!, certainly!
+**Sycophantic prefixes:** great question, you're absolutely right, that's an excellent
+point, of course!, certainly!
 
-**Templated email / Slack closers:**
-happy to jump on a call, let me know if you have any questions, feel free to reach out,
-i hope this helps, looking forward to connecting soon
+**Templated closers:** happy to jump on a call, let me know if you have any questions,
+feel free to reach out, i hope this helps, looking forward to connecting soon
 
-**Binary framing:**
-whether X or Y (as a clean binary framing opener)
+**Binary framing opener:** whether X or Y
 
 ## Source
 
-The nine-lever framework and banned word/phrase list above are adapted from the
-[humanize](https://github.com/harshaneel/humanize) skill by Harshaneel Gokhale (MIT
-License, Copyright (c) 2026 Harshaneel Gokhale), which itself draws on 50+ peer-reviewed
-detection-literature sources. The academic citations inline (Wu et al., Mitchell et al.,
-Kujur, arXiv references throughout) trace back to that same source material.
+The functional idea of a multi-lever rewrite pass targeting statistical AI-detection
+signals, and much of the underlying pattern knowledge, builds on prior work in this
+space: the [humanize](https://github.com/harshaneel/humanize) project by Harshaneel
+Gokhale (MIT License). The six-move grouping, the protocol structure, and the wording
+throughout are this skill's own.
+
+Academic grounding: Junchao Wu, Shu Yang, Runzhe Zhan, Yulin Yuan, Lidia Sam Chao, and
+Derek Fai Wong, "A Survey on LLM-Generated Text Detection: Necessity, Methods, and Future
+Directions," *Computational Linguistics* 51(1):275-338, 2025
+(https://aclanthology.org/2025.cl-1.8/); Mitchell et al. 2023 (DetectGPT).

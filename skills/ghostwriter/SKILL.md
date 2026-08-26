@@ -44,11 +44,11 @@ needs to work from any of them). It lives in one fixed personal file:
   checks — templated *structure* is a stronger tell than word choice.
 - No setup → tease → punchline joke structure ("Can't say more yet. [reveal]. So
   [ironic tag line].") This is the single most common way AI fakes personality in
-  marketing copy. It isn't its own named pattern in `ai-check`'s Signal I catalog, so it
-  needs calling out here. Everything else in Signal I — comparative framing ("more X
-  than Y"), aphorism/landing-phrase closers, parallel-subject mirrors, anaphora, binaries
-  — is already covered by the post-rewrite `ai-check` audit below; it isn't duplicated
-  here since that's a real invocation now, not a remembered checklist.
+  marketing copy. It isn't a named tell in `ai-check`'s catalog, so it needs calling out
+  here. Everything else that pattern-family covers — comparative framing ("more X than
+  Y"), aphorism/landing-phrase closers, parallel-subject mirrors, repeated openers,
+  binaries — is already covered by the post-rewrite `ai-check` audit below; it isn't
+  duplicated here since that's a real invocation now, not a remembered checklist.
 - Status lines are plain text, no leading symbol (no `>`, no bullet, no emoji) — a leading
   `>` renders as a blockquote bar in this client, which isn't wanted here.
 - Emit each status line as its own text output immediately after that skill call returns,
@@ -58,11 +58,11 @@ needs to work from any of them). It lives in one fixed personal file:
   collect them and print them all in a block right before the final text.
 - If there is existing text to rewrite (not a from-scratch draft), invoke `ai-check` with the
   Skill tool on that input text first. After it returns, write its status line, e.g.
-  `Checked input - reads as Likely AI, 3 signals fired`. Use its findings to target the
-  rewrite at what's actually firing, instead of running every lever uniformly regardless of
-  whether the input needs it.
+  `Checked input - reads AI, 4 tells fired`. Use its findings to target the rewrite at
+  what's actually firing, instead of running every move uniformly regardless of whether
+  the input needs it.
 - Then invoke the `ai-clean` skill with the Skill tool. After it returns, write its status
-  line, e.g. `Cleaned draft`. Do not apply its levers from memory — memory drifts and skips
+  line, e.g. `Cleaned draft`. Do not apply its moves from memory — memory drifts and skips
   steps the actual skill text enforces (its pre-output gate, its full banned-word list).
   Load it, then draft the baseline hygiene pass for real (burstiness, no hedge padding, no
   banned AI vocabulary, punctuation normalization), directed by what `ai-check` found on
@@ -88,30 +88,31 @@ Invoke `ai-check` a second time, now on the drafted output, before returning it 
 fresh each time, don't self-score from memory of a past run. This is a different check than
 the pre-rewrite pass above: that one diagnosed the input to steer the rewrite, this one
 verifies the output actually improved and didn't introduce anything new. After it returns,
-output one short status line, e.g. `Verified output - reads as Human`. Report just the
-verdict tier here too, never a raw score or a made-up percentage (the score is a rule-hit
-count, not a probability — "1/27 -> 96% human" would be inventing precision the checklist
-doesn't support).
+output one short status line, e.g. `Verified output - reads human`. Report just the
+verdict tier here too, never a raw density number or a made-up percentage (the density is
+a weighted tell count, not a probability — turning it into "96% human" would be inventing
+precision the checklist doesn't support).
 
-If the verdict isn't Human or Likely Human, don't stop there - go back to `ai-clean` with
-these fresh findings and redraft (status line: `Redraft 1 - reapplying ai-clean`), then
-run `ai-check` again and report its status line (`Verified output - reads as Uncertain`).
-Cap this at two redraft cycles. If it's still not Human or Likely Human after that, say so
-plainly in that last status line (e.g. `Verified output - still Uncertain after 2
-redrafts`) instead of looping forever or quietly passing a weaker verdict through.
+If the verdict isn't "Reads human" or "Mostly human," don't stop there - go back to
+`ai-clean` with these fresh findings and redraft (status line: `Redraft 1 - reapplying
+ai-clean`), then run `ai-check` again and report its status line (`Verified output - mixed
+signals`). Cap this at two redraft cycles. If it's still not in one of those top two tiers
+after that, say so plainly in that last status line (e.g. `Verified output - still mixed
+signals after 2 redrafts`) instead of looping forever or quietly passing a weaker verdict
+through.
 
-It covers both a
-statistical/rhetorical-scaffolding taxonomy (burstiness, chiasmus, asyndeton tricolon, participial reframe pivots,
-parallel-subject mirrors) and a content-pattern catalog folded in from Wikipedia's "Signs of
-AI writing" (sales language, name-dropping, chatbot residue, knowledge-cutoff disclaimers,
-curly quotes, formatting abuse) — one report, both angles covered.
+`ai-check` covers word-choice tells, sentence-rhythm tells, document-structure tells, and
+the harder sentence-level rhetorical moves (chiasmus, mirrored subjects, reframe pivots) -
+plus chatbot-residue and formatting-abuse tells that come from the same broader body of
+observed AI-writing patterns this whole field draws on.
 
-A clean `ai-check` result means no *known, rule-based* pattern fired. It is not proof the
+A clean `ai-check` result means no *known, rule-based* tell fired. It is not proof the
 text will pass a real trained classifier (Pangram, GPTZero). `ai-check` is a self-graded
-rubric applied by the same model that may have drafted the text, and it only checks its full
-genre-template / rhetorical-scaffolding list on outputs over 150 words, so short posts (the
-common case here: LinkedIn posts, replies) get a thinner check by construction. A real
-"new job" or "we're hiring" post scored "Human" by `ai-check` has already been caught by
-a real classifier as 100% AI once. Don't report a clean `ai-check` pass as "this is safe" or
-"this will pass detection." Say what it actually means: no rule violations found, template
-and structural risk still possible, especially under 150 words.
+checklist applied by the same model that may have drafted the text, and short posts (the
+common case here: LinkedIn posts, replies) simply have fewer words for tells to fire
+against, so they get a thinner check by construction, not a more lenient one. A real
+"new job" or "we're hiring" post that read clean by a checklist like this has still been
+caught by a real classifier as 100% AI before. Don't report a clean `ai-check` pass as
+"this is safe" or "this will pass detection." Say what it actually means: no rule
+violations found here, risk from anything this checklist doesn't cover still possible,
+especially under 150 words.
