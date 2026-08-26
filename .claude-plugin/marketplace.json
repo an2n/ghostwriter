@@ -1,0 +1,17 @@
+{
+	"$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+	"name": "ghostwriter",
+	"description": "Marketplace for the ghostwriter plugin.",
+	"owner": {
+		"name": "an2n",
+		"url": "https://github.com/an2n"
+	},
+	"plugins": [
+		{
+			"name": "ghostwriter",
+			"description": "Writes and rewrites text in your own voice instead of generic AI prose, with a check and polish pass built in.",
+			"source": "./",
+			"category": "productivity"
+		}
+	]
+}

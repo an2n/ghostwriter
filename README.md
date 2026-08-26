@@ -29,11 +29,16 @@ For agents without filesystem-based skill folders (ChatGPT web, Gemini, Cursor, 
 there's nothing to install - paste the contents of `skills/ghostwriter/SKILL.md` (and the
 other two, if you want the full pipeline) directly into the conversation.
 
-**As a Claude Code plugin:** point Claude Code's plugin/marketplace mechanism at this repo
-instead. Skill discovery is declared in `.claude-plugin/plugin.json`
-(`"skills": "./skills"`). Installed this way, Claude Code namespaces skills by plugin
-name, so `check` and `polish` show up as `ghostwriter:check` and `ghostwriter:polish` -
-same skills, just addressed through the plugin name.
+**As a Claude Code plugin:**
+
+```
+/plugin marketplace add an2n/ghostwriter
+/plugin install ghostwriter@an2n-ghostwriter
+```
+
+Installed this way, Claude Code namespaces skills by plugin name, so `check` and `polish`
+show up as `ghostwriter:check` and `ghostwriter:polish` - same skills, just addressed
+through the plugin name.
 
 ## What's in here
 
