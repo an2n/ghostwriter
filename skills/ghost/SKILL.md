@@ -73,6 +73,14 @@ needs to work from any of them). It lives in one fixed personal file:
   it toward more complete sentences). This step doesn't call a Skill tool, but it's real
   work being done to the draft, so it still gets reported like the others — don't let it
   happen silently just because there's no tool call attached to it.
+- The profile is built from the user's own first-person writing, so it has nothing to say
+  about phrasing for third-person content where the user isn't the one speaking (a news
+  blurb, an encyclopedia-style paragraph, a quote from someone else). Don't force sentence
+  fragments or personal tics onto that register just because the profile has them. Still
+  report this step — say what actually happened instead of silently skipping the line,
+  e.g. `Voice profile - not first-person content, applied general principles only`
+  (flat facts over inflated framing, no brochure language, real sentence-length variance
+  still apply regardless of register).
 - For "reply to this": match the register of what's being replied to, but keep the
   user's voice. A reply to a client email isn't a LinkedIn post.
 - Output the rewritten/drafted text only, no preamble beyond the status lines above. No
