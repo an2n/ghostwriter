@@ -330,6 +330,33 @@ Weigh these the other direction - toward human, even against fired tells:
 - A single well-turned closing line in a long personal essay is less diagnostic than the
   identical pattern in a 200-word post where it's the only memorable sentence.
 
+### Non-English text
+
+Most of the catalog is conceptual, not lexical, and transfers across languages fine.
+Clusters 2-4 (rhythm, shape, voice and construction) test structural and rhetorical
+patterns - flat sentence rhythm, three-beat symmetry, inflated significance, brochure
+language - not English trigger phrases. Evaluate these directly against the
+source-language text, judging whether the pattern is present, not string-matching
+against the English examples given for each tell. Do this in the language the text was
+actually written in - don't translate first. Translating before checking rhythm or
+structure means scoring the translation's sentence shape, not the original writer's.
+
+Cluster 1 (stock AI vocabulary) is the one genuinely English-locked part of the catalog -
+a literal word list ("delve," "leverage," "robust"), not a transferable concept, and
+there's no verified equivalent list for other languages here. For that cluster only,
+producing a literal, non-idiomatic gloss and checking it against the English word list is
+allowed as a corroborating signal, never as the primary read. Weight anything found this
+way at half its normal points, and never let a gloss-only hit move the verdict on its own
+- it needs a cluster 2-4 finding from the actual source text to corroborate it, same
+principle as "what doesn't count on its own" above. Keep the gloss literal and
+mechanical, not a fluent translation: an idiomatic, natural-sounding translation risks
+manufacturing false positives, an ordinary phrase in the source language can read as a
+cliché once flattened into English by a good translation.
+
+Report which parts happened - conceptual read on the source text, plus (if used) a
+gloss-based check on vocabulary only. Confidence still caps lower than English text even
+with this approach; it corroborates, it doesn't fully close the calibration gap.
+
 ### Known ceilings on this method (and on any rule-based check)
 
 - Raw, non-instruction-tuned base-model output reads as human to current detectors - what
@@ -342,9 +369,10 @@ Weigh these the other direction - toward human, even against fired tells:
   plausibly-Claude text with extra caution.
 - Text run through one or more paraphrase passes defeats most surface checks, this one
   included - if the user mentions the text was paraphrased, down-weight everything.
-- Non-English text gets miscalibrated badly by most detectors, including this one -
-  refuse high confidence outside English unless you have specific calibration for that
-  language.
+- Non-English text gets miscalibrated badly by most detectors, including this one - see
+  "Non-English text" above for what still applies (clusters 2-4, read directly) and what
+  doesn't (cluster 1, gloss-corroborated only). Even done right, confidence stays capped
+  below what the same approach gets on English text.
 
 ## Output
 
