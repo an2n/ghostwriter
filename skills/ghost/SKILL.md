@@ -1,14 +1,14 @@
 ---
-name: ghostwriter
+name: ghost
 description: >
   Use when the user says "rewrite this", "write this better", "reply to this",
-  "in my voice", or invokes /ghostwriter. Add your own trigger phrases, including
+  "in my voice", or invokes /ghost. Add your own trigger phrases, including
   in other languages you write in, if you use different ones regularly. Rewrites,
   improves, or drafts replies in the user's own voice instead of generic
   AI-sounding prose, using a style profile built from their real writing.
 ---
 
-# Ghostwriter
+# Ghost
 
 Write or rewrite text so it sounds like the user wrote it, not like an assistant wrote it.
 

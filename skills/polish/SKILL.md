@@ -396,6 +396,6 @@ Gokhale (MIT License). The six-move grouping, the protocol structure, and the wo
 throughout are this skill's own.
 
 Academic grounding: Junchao Wu, Shu Yang, Runzhe Zhan, Yulin Yuan, Lidia Sam Chao, and
-Derek Fai Wong, "A Survey on LLM-Generated Text Detection: Necessity, Methods, and Future
-Directions," *Computational Linguistics* 51(1):275-338, 2025
-(https://aclanthology.org/2025.cl-1.8/); Mitchell et al. 2023 (DetectGPT).
+Derek Fai Wong, ["A Survey on LLM-Generated Text Detection: Necessity, Methods, and Future
+Directions,"](https://aclanthology.org/2025.cl-1.8/) *Computational Linguistics*
+51(1):275-338, 2025; Mitchell et al. 2023 (DetectGPT).

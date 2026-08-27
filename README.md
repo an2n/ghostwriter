@@ -23,28 +23,28 @@ agents interactively, or add `-g` for a global (user-level) install instead of
 project-level. See `npx skills --help` for the full option set.
 
 Restart your agent (or start a new session) and the three skills are available - try
-`/ghostwriter` (Claude Code), or just say "rewrite this in my voice" with some text.
+`/ghost` (Claude Code), or just say "rewrite this in my voice" with some text.
 
 For agents without filesystem-based skill folders (ChatGPT web, Gemini, Cursor, Aider),
-there's nothing to install - paste the contents of `skills/ghostwriter/SKILL.md` (and the
+there's nothing to install - paste the contents of `skills/ghost/SKILL.md` (and the
 other two, if you want the full pipeline) directly into the conversation.
 
 **As a Claude Code plugin:**
 
 ```
 /plugin marketplace add an2n/ghostwriter
-/plugin install ghostwriter@an2n-ghostwriter
+/plugin install ghostwriter@ghostwriter
 ```
 
-Installed this way, Claude Code namespaces skills by plugin name, so `check` and `polish`
-show up as `ghostwriter:check` and `ghostwriter:polish` - same skills, just addressed
-through the plugin name.
+Installed this way, Claude Code namespaces skills by plugin name, so `ghost`, `check`, and
+`polish` show up as `ghostwriter:ghost`, `ghostwriter:check`, and `ghostwriter:polish` -
+same skills, just addressed through the plugin name.
 
 ## What's in here
 
 Three skills, each with one job:
 
-- **`ghostwriter`** — the orchestrator. Loads your voice profile, runs the pipeline below,
+- **`ghost`** — the orchestrator. Loads your voice profile, runs the pipeline below,
   and drafts the actual rewrite.
 - **`check`** — find-only. Scores a piece of text across four tell clusters (word
   choice, rhythm, document shape, voice and construction) and returns a verdict from
@@ -53,14 +53,14 @@ Three skills, each with one job:
   padding and imposed structure, anchoring specifics, letting a voice through,
   punctuation) to move text in the human direction. Never scores anything.
 
-`ghostwriter` is the one you actually invoke. `check` and `polish` are also directly
+`ghost` is the one you actually invoke. `check` and `polish` are also directly
 callable on their own if you just want a score or just want a cleanup pass without the
 voice-profile layer.
 
 ## How the pipeline works
 
 Say "rewrite this", "write this better", "reply to this", "in my voice", or invoke
-`/ghostwriter` with text:
+`/ghost` with text:
 
 1. **Load the voice profile** from `~/.claude/ghostwriter-profile.md` (see below). If it
    doesn't exist yet, it asks once for 2-3 writing samples and builds one.
@@ -83,14 +83,14 @@ rubric, not a substitute for one.
 
 ## The voice profile
 
-`ghostwriter` needs `~/.claude/ghostwriter-profile.md` to know what "your voice" actually
+`ghost` needs `~/.claude/ghostwriter-profile.md` to know what "your voice" actually
 means. This file is personal, machine-local data — it never lives in this repo or gets
 committed anywhere. It's built once from 2-3 real writing samples (a LinkedIn post, an
 email, a Slack message — whatever's natural) and covers sentence shape, real vocabulary,
 punctuation habits, and register range across the contexts you actually write in.
 
 If the profile drifts from how you actually write (you keep correcting the same thing),
-`ghostwriter` will offer to update it — never silently, and never off a single correction.
+`ghost` will offer to update it — never silently, and never off a single correction.
 
 ## Attribution
 

@@ -354,7 +354,7 @@ plain language naming the strongest tells - specific about which phrases or abse
 mattered, not just a density number. If the verdict lands at "Reads AI" or "Heavily AI,"
 add up to three concrete fixes as compact bullets, not a full rewritten sample.
 
-If another skill invoked this one internally (e.g. `ghostwriter` running a pre-check or
+If another skill invoked this one internally (e.g. `ghost` running a pre-check or
 verification pass) rather than the user directly asking to check a piece of text, skip
 printing any of this. Still run the full analysis for real, but hand back only the
 verdict and total density for the caller to build its own one-line status.
@@ -381,7 +381,7 @@ maintained by WikiProject AI Cleanup), which that project and the
 the density-based scoring mechanic, and the wording throughout are this skill's own.
 
 Academic grounding: Junchao Wu, Shu Yang, Runzhe Zhan, Yulin Yuan, Lidia Sam Chao, and
-Derek Fai Wong, "A Survey on LLM-Generated Text Detection: Necessity, Methods, and Future
-Directions," *Computational Linguistics* 51(1):275-338, 2025
-(https://aclanthology.org/2025.cl-1.8/); Mitchell et al. 2023 (DetectGPT); the AAAI 2025
-shared task on machine-generated text detection.
+Derek Fai Wong, ["A Survey on LLM-Generated Text Detection: Necessity, Methods, and Future
+Directions,"](https://aclanthology.org/2025.cl-1.8/) *Computational Linguistics*
+51(1):275-338, 2025; Mitchell et al. 2023 (DetectGPT); the AAAI 2025 shared task on
+machine-generated text detection.
