@@ -368,20 +368,3 @@ patterns a learned classifier catches, or flag things a learned classifier would
 report a clean pass as "this is safe" or "this will pass detection" - say what it actually
 means: no rule violations found here, risk from anything this checklist doesn't cover
 still possible.
-
-## Source
-
-The functional idea of scoring AI-generation signals across multiple categories, and much
-of the underlying pattern knowledge, builds on prior work in this space: the
-[humanize](https://github.com/harshaneel/humanize) project by Harshaneel Gokhale (MIT
-License), and Wikipedia's ["Signs of AI
-writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) (CC BY-SA 4.0,
-maintained by WikiProject AI Cleanup), which that project and the
-[humanizer](https://github.com/blader/humanizer) skill (MIT) also draw on. The clustering,
-the density-based scoring mechanic, and the wording throughout are this skill's own.
-
-Academic grounding: Junchao Wu, Shu Yang, Runzhe Zhan, Yulin Yuan, Lidia Sam Chao, and
-Derek Fai Wong, ["A Survey on LLM-Generated Text Detection: Necessity, Methods, and Future
-Directions,"](https://aclanthology.org/2025.cl-1.8/) *Computational Linguistics*
-51(1):275-338, 2025; Mitchell et al. 2023 (DetectGPT); the AAAI 2025 shared task on
-machine-generated text detection.

@@ -386,16 +386,3 @@ point, of course!, certainly!
 feel free to reach out, i hope this helps, looking forward to connecting soon
 
 **Binary framing opener:** whether X or Y
-
-## Source
-
-The functional idea of a multi-lever rewrite pass targeting statistical AI-detection
-signals, and much of the underlying pattern knowledge, builds on prior work in this
-space: the [humanize](https://github.com/harshaneel/humanize) project by Harshaneel
-Gokhale (MIT License). The six-move grouping, the protocol structure, and the wording
-throughout are this skill's own.
-
-Academic grounding: Junchao Wu, Shu Yang, Runzhe Zhan, Yulin Yuan, Lidia Sam Chao, and
-Derek Fai Wong, ["A Survey on LLM-Generated Text Detection: Necessity, Methods, and Future
-Directions,"](https://aclanthology.org/2025.cl-1.8/) *Computational Linguistics*
-51(1):275-338, 2025; Mitchell et al. 2023 (DetectGPT).
