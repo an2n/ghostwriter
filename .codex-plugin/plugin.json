@@ -1,0 +1,12 @@
+{
+	"name": "ghostwriter",
+	"version": "1.0.0",
+	"description": "Writes and rewrites text in your own voice instead of generic AI prose, with a check and polish pass built in.",
+	"license": "MIT",
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Ghostwriter",
+		"shortDescription": "Rewrites text in your own voice instead of generic AI prose.",
+		"category": "Writing"
+	}
+}

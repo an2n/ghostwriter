@@ -40,6 +40,15 @@ Installed this way, Claude Code namespaces skills by plugin name, so `ghost`, `c
 `polish` show up as `ghostwriter:ghost`, `ghostwriter:check`, and `ghostwriter:polish` -
 same skills, just addressed through the plugin name.
 
+**As a Codex CLI plugin:**
+
+```
+/plugins
+```
+
+Add `an2n/ghostwriter` as a marketplace from the plugin browser, then install `ghostwriter`
+from it. Start a new session afterward for the bundled skills to load.
+
 ## What's in here
 
 Three skills, each with one job:
