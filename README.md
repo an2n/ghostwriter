@@ -2,6 +2,10 @@
   <img src="assets/ghostwriter.png" alt="Ghostwriter" width="200" />
 </p>
 
+<p align="center">
+  <a href="https://skills.sh/an2n/ghostwriter"><img src="https://skills.sh/b/an2n/ghostwriter" alt="skills.sh installs" /></a>
+</p>
+
 # Ghostwriter
 
 > A ghostwriter is a professional writer hired to draft or edit literary works, articles,
