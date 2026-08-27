@@ -77,6 +77,14 @@ needs to work from any of them). It lives in one fixed personal file:
   it toward more complete sentences). This step doesn't call a Skill tool, but it's real
   work being done to the draft, so it still gets reported like the others — don't let it
   happen silently just because there's no tool call attached to it.
+- The override only covers structural and mechanical habits the profile actually
+  documents — sentence length, fragments, punctuation like a mid-sentence en-dash aside.
+  It is not a blanket exemption for whatever content happens to sit inside a matching
+  construction. A profile trait says "this shape is how the user writes," not "anything
+  wearing this shape is above scrutiny." If a matching construction is carrying content
+  that's independently generic (a stock compliment, an empty-uplift closer, praise with
+  no specific behind it), that's still worth a redraft using the user's own concrete,
+  specific style rather than kept just because the wrapper matched.
 - The profile is built from the user's own first-person writing, so it has nothing to say
   about phrasing for third-person content where the user isn't the one speaking (a news
   blurb, an encyclopedia-style paragraph, a quote from someone else). Don't force sentence
