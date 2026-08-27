@@ -107,6 +107,16 @@ shape, split across sentences or comma-joined inside one ("fix the bug, write th
 open the PR"). A perfectly symmetrical triplet is a tell either way - real writers vary
 the shape or use two items.
 
+**Clause-stacking via dash and commas** (weight 2): a dash-introduced clause carrying
+three or more comma-joined items, even when the item shapes are deliberately varied to
+dodge three-beat symmetry ("the launch went well - new signups, a few bug reports, and
+one very confused support ticket, though nothing broke"). It's a list wearing a
+sentence's punctuation instead of bullets or a symmetric triplet. Fires on clause-count
+and density alone, symmetric shapes or not - this is what three-beat symmetry misses
+when the writer (or the model) varies the grammar on purpose. A single dash with one
+short aside, or a sentence with two comma-joined items, doesn't count; this needs the
+volume - three-plus items stacked behind one connector.
+
 **Suspiciously clean paragraph arcs** (weight 2): every paragraph does exactly one job
 and lands cleanly, nothing left unresolved. Real writing has at least one paragraph that
 does two jobs or doesn't fully close.

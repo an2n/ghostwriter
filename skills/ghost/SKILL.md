@@ -85,6 +85,15 @@ needs to work from any of them). It lives in one fixed personal file:
   that's independently generic (a stock compliment, an empty-uplift closer, praise with
   no specific behind it), that's still worth a redraft using the user's own concrete,
   specific style rather than kept just because the wrapper matched.
+- Matching a trait also means matching its scale, not just its presence. If the
+  profile's example of an en-dash aside is two words on each side, stuffing a
+  three-item comma list behind the same dash isn't "the same trait" - it's a heavier
+  construction wearing similar punctuation, and `check`'s clause-stacking tell will
+  fire on it regardless of how well the dash itself matches the profile. Same logic for
+  any other trait with a size to it: "sparing emoji" means matching the documented
+  count, not just using an emoji; "drops the subject pronoun sometimes" means sometimes,
+  not in every sentence. Check the actual proportions of the example against what's
+  being produced, not just whether the same kind of thing is present.
 - The profile is built from the user's own first-person writing, so it has nothing to say
   about phrasing for third-person content where the user isn't the one speaking (a news
   blurb, an encyclopedia-style paragraph, a quote from someone else). Don't force sentence
