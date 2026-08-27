@@ -57,10 +57,22 @@ needs to work from any of them). It lives in one fixed personal file:
   its status line, then call `polish`, then write its status line, and so on. Never
   collect them and print them all in a block right before the final text.
 - If there is existing text to rewrite (not a from-scratch draft), invoke `check` with the
-  Skill tool on that input text first. After it returns, write its status line, e.g.
-  `Checked input - reads AI, 4 tells fired`. Use its findings to target the rewrite at
-  what's actually firing, instead of running every move uniformly regardless of whether
-  the input needs it.
+  Skill tool on that input text first, and use its findings to target the rewrite at
+  what's actually firing instead of running every move uniformly.
+- That input is usually the user's own writing, so read the voice profile before that call
+  and filter what comes back. A tell whose evidence is a documented profile trait is a
+  false positive here: drop it before the findings reach `polish`, and keep it out of the
+  status line too. The profile is the record of how this person actually writes, so
+  scoring one of its traits as an AI tell and then polishing it out is the rewrite
+  deleting the voice it exists to preserve. Same for anything check's own calibration
+  already weighs toward human, first-person ambivalence and unresolved tension
+  especially.
+- What survives that filter is what the rewrite acts on, so the status line reports the
+  count of surviving findings, never a verdict tier - a verdict on the user's own prose
+  is noise, and on a short post it's an unreliable read besides. `Checked input - 2 tells
+  to fix, rest is your voice` says the useful part. `reads AI, 4 tells fired` doesn't.
+  If nothing survives, say that (`Checked input - nothing to fix, going straight to
+  voice`) rather than inventing work for polish to do.
 - Then invoke the `polish` skill with the Skill tool. The arguments passed to that call
   must literally include check's findings from the previous step (the specific tells and
   quoted evidence, not just "clean this up") — "directed by what check found" only
