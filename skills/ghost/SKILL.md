@@ -61,12 +61,16 @@ needs to work from any of them). It lives in one fixed personal file:
   `Checked input - reads AI, 4 tells fired`. Use its findings to target the rewrite at
   what's actually firing, instead of running every move uniformly regardless of whether
   the input needs it.
-- Then invoke the `polish` skill with the Skill tool. After it returns, write its status
-  line, e.g. `Cleaned draft`. Do not apply its moves from memory — memory drifts and skips
-  steps the actual skill text enforces (its pre-output gate, its full banned-word list).
-  Load it, then draft the baseline hygiene pass for real (burstiness, no hedge padding, no
-  banned AI vocabulary, punctuation normalization), directed by what `check` found on
-  the input.
+- Then invoke the `polish` skill with the Skill tool. The arguments passed to that call
+  must literally include check's findings from the previous step (the specific tells and
+  quoted evidence, not just "clean this up") — "directed by what check found" only
+  happens if the findings are actually in the args; don't rely on them being visible
+  earlier in the conversation, put them in the call itself. After it returns, write its
+  status line, e.g. `Cleaned draft`. Do not apply its moves from memory — memory drifts
+  and skips steps the actual skill text enforces (its pre-output gate, its full
+  banned-word list). Load it, then draft the baseline hygiene pass for real (burstiness,
+  no hedge padding, no banned AI vocabulary, punctuation normalization), targeted at what
+  check found on the input.
 - Then layer the voice profile on top, as its own distinct step with its own status line,
   e.g. `Applied voice profile`. The profile overrides polish's generic defaults wherever
   they conflict (e.g. if the user's real writing runs short and fragmented, don't "improve"
@@ -102,7 +106,8 @@ a weighted tell count, not a probability — turning it into "96% human" would b
 precision the checklist doesn't support).
 
 If the verdict isn't "Reads human" or "Mostly human," don't stop there - go back to
-`polish` with these fresh findings and redraft (status line: `Redraft 1 - reapplying
+`polish`, same rule as the first call: put this verification pass's specific findings
+literally in the args, not a vague "try again" (status line: `Redraft 1 - reapplying
 polish`), then run `check` again and report its status line (`Verified output - mixed
 signals`). Cap this at two redraft cycles. If it's still not in one of those top two tiers
 after that, say so plainly in that last status line (e.g. `Verified output - still mixed
